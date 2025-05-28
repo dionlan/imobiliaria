@@ -1,0 +1,14 @@
+<div class="card">
+    <h3 class="text-xl font-semibold mb-4">Associação de Corretores</h3>
+
+    <div class="field">
+        <label for="agents">Corretores Disponíveis</label>
+        <p-multiSelect [options]="availableAgents" [(ngModel)]="selectedAgents" optionLabel="name" optionValue="id"
+            [showToggleAll]="false" placeholder="Selecione os corretores"></p-multiSelect>
+    </div>
+
+    <div class="flex justify-content-end gap-2 mt-4">
+        <button pButton label="Cancelar" icon="pi pi-times" severity="secondary"></button>
+        <button pButton label="Salvar" icon="pi pi-check" (click)="saveAssociations()"></button>
+    </div>
+</div>

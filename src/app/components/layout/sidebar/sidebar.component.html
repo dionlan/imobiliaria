@@ -1,0 +1,56 @@
+<aside class="sidebar" [class.sidebar--open]="isSidebarVisible" [class.sidebar--closed]="!isSidebarVisible">
+
+    <div class="sidebar__content">
+        <!-- Logo e toggle -->
+        <div class="sidebar__header">
+            <div class="sidebar__logo">
+                <svg class="sidebar__logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- SVG mantido igual -->
+                </svg>
+                <span class="sidebar__logo-text">Simóvel</span>
+            </div>
+        </div>
+
+        <!-- Menu Principal -->
+        <nav class="sidebar__nav">
+            <ul class="sidebar__menu">
+                @for (item of menuItems; track item.label) {
+                <li class="sidebar__menu-item">
+                    <a [routerLink]="item.routerLink" routerLinkActive="sidebar__link--active"
+                        [routerLinkActiveOptions]="item.routerLinkActiveOptions || { exact: false }"
+                        class="sidebar__link">
+                        <i [class]="item.icon" class="sidebar__link-icon"></i>
+                        <span class="sidebar__link-text">{{ item.label }}</span>
+                        @if (item.badge) {
+                        <span class="sidebar__badge">{{ item.badge }}</span>
+                        }
+                    </a>
+                </li>
+                }
+            </ul>
+        </nav>
+
+        <!-- Rodapé do Sidebar -->
+        <div class="sidebar__footer">
+            <div class="sidebar__user">
+                <div class="sidebar__user-avatar">
+                    {{ userInitial }}
+                </div>
+                @if (isSidebarVisible) {
+                <div class="sidebar__user-info">
+                    <p class="sidebar__user-name">{{ userName }}</p>
+                    <p class="sidebar__user-role">{{ userRole | titlecase }}</p>
+                </div>
+                }
+                <button (click)="logout()" class="sidebar__logout-button" aria-label="Sair">
+                    <i class="pi pi-sign-out"></i>
+                </button>
+            </div>
+            @if (isSidebarVisible) {
+            <div class="sidebar__copyright">
+                © {{ currentYear }} Simóvel. Todos os direitos reservados.
+            </div>
+            }
+        </div>
+    </div>
+</aside>

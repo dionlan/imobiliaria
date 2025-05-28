@@ -1,0 +1,312 @@
+[
+  {
+    "id": 1,
+    "name": "Residencial Solar",
+    "address": "QR 412 Conjunto 5, 12 - Gama/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "72450-512",
+    "description": "Condomínio residencial de alto padrão com 3 torres e 200 unidades",
+    "status": "ATIVO",
+    "managers": [
+      {
+        "managerId": 2,
+        "agents": [
+          { "agentId": 3 }
+        ]
+      }
+    ],
+    "isActive": true,
+    "createdAt": "2023-01-10T00:00:00.000Z",
+    "updatedAt": "2023-01-10T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+    "images": [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Edifício Ceilândia Center",
+    "address": "QNN 18 Conjunto E, 10 - Ceilândia/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "72210-180",
+    "description": "Prédio comercial com salas para escritórios",
+    "status": "ATIVO",
+    "managers": [
+      {
+        "managerId": 2,
+        "agents": [
+          { "agentId": 5 },
+          { "agentId": 6 }
+        ]
+      },
+      {
+        "managerId": 4,
+        "agents": []
+      }
+    ],
+    "isActive": true,
+    "createdAt": "2023-02-15T00:00:00.000Z",
+    "updatedAt": "2023-06-20T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab",
+    "images": [
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Residencial Samambaia Verde",
+    "address": "QN 315 Conjunto 2, 8 - Samambaia/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "72315-202",
+    "description": "Conjunto habitacional com 120 casas populares",
+    "status": "INATIVO",
+    "managers": [
+      {
+        "managerId": 7,
+        "agents": [
+          { "agentId": 8 }
+        ]
+      }
+    ],
+    "isActive": false,
+    "createdAt": "2023-03-05T00:00:00.000Z",
+    "updatedAt": "2023-11-10T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914",
+    "images": [
+      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Noroeste Business Tower",
+    "address": "SHIN QI 7 Bloco A - Noroeste/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "71503-507",
+    "description": "Torre corporativa com 25 andares",
+    "status": "ATIVO",
+    "managers": [
+      {
+        "managerId": 4,
+        "agents": [
+          { "agentId": 3 },
+          { "agentId": 5 },
+          { "agentId": 9 }
+        ]
+      },
+      {
+        "managerId": 7,
+        "agents": []
+      }
+    ],
+    "isActive": true,
+    "createdAt": "2023-04-18T00:00:00.000Z",
+    "updatedAt": "2023-09-22T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2",
+    "images": [
+      "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Sudoeste Living",
+    "address": "CLS 405 Bloco B, 12 - Sudoeste/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "70680-525",
+    "description": "Condomínio fechado com 5 prédios de 10 andares",
+    "status": "ATIVO",
+    "managers": [
+      {
+        "managerId": 2,
+        "agents": [
+          { "agentId": 6 }
+        ]
+      },
+      {
+        "managerId": 4,
+        "agents": [
+          { "agentId": 8 }
+        ]
+      },
+      {
+        "managerId": 7,
+        "agents": []
+      }
+    ],
+    "isActive": true,
+    "createdAt": "2023-05-30T00:00:00.000Z",
+    "updatedAt": "2023-10-15T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+    "images": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Taguatinga Trade Center",
+    "address": "CNB 12, 1 - Taguatinga/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "72110-012",
+    "description": "Complexo comercial com lojas e escritórios",
+    "status": "INATIVO",
+    "managers": [
+      {
+        "managerId": 4,
+        "agents": [
+          { "agentId": 5 },
+          { "agentId": 9 }
+        ]
+      }
+    ],
+    "isActive": false,
+    "createdAt": "2023-06-12T00:00:00.000Z",
+    "updatedAt": "2023-12-01T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+    "images": [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Gama Residence",
+    "address": "QR 320 Conjunto 8, 15 - Gama/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "72430-208",
+    "description": "Conjunto de apartamentos de médio padrão",
+    "status": "ATIVO",
+    "managers": [
+      {
+        "managerId": 2,
+        "agents": [
+          { "agentId": 3 },
+          { "agentId": 6 }
+        ]
+      }
+    ],
+    "isActive": true,
+    "createdAt": "2023-07-22T00:00:00.000Z",
+    "updatedAt": "2023-11-30T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
+    "images": [
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Ceilândia Popular",
+    "address": "QNM 22 Conjunto D, 7 - Ceilândia/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "72210-222",
+    "description": "Conjunto habitacional de interesse social",
+    "status": "PENDENTE",
+    "managers": [
+      {
+        "managerId": 7,
+        "agents": [
+          { "agentId": 8 }
+        ]
+      }
+    ],
+    "isActive": true,
+    "createdAt": "2023-08-14T00:00:00.000Z",
+    "updatedAt": "2023-09-05T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Samambaia Office Park",
+    "address": "QN 210 Conjunto 3, 20 - Samambaia/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "72310-203",
+    "description": "Complexo de escritórios modulares",
+    "status": "EM_MANUTENCAO",
+    "managers": [
+      {
+        "managerId": 2,
+        "agents": []
+      },
+      {
+        "managerId": 4,
+        "agents": [
+          { "agentId": 5 }
+        ]
+      }
+    ],
+    "isActive": false,
+    "createdAt": "2023-09-03T00:00:00.000Z",
+    "updatedAt": "2023-12-15T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1497366811353-6870744d04b2",
+    "images": [
+      "https://images.unsplash.com/photo-1497366811353-6870744d04b2"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Noroeste Premium",
+    "address": "SHIN QI 11 Bloco C - Noroeste/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "71503-511",
+    "description": "Condomínio de luxo com unidades de 200m² a 400m²",
+    "status": "ATIVO",
+    "managers": [
+      {
+        "managerId": 4,
+        "agents": [
+          { "agentId": 3 }
+        ]
+      },
+      {
+        "managerId": 7,
+        "agents": [
+          { "agentId": 9 }
+        ]
+      }
+    ],
+    "isActive": true,
+    "createdAt": "2023-10-25T00:00:00.000Z",
+    "updatedAt": "2023-12-10T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6",
+    "images": [
+      "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Sudoeste Comercial",
+    "address": "CLS 302 Bloco A, 5 - Sudoeste/DF",
+    "city": "Brasília",
+    "state": "DF",
+    "zipCode": "70680-302",
+    "description": "Galeria comercial com 20 lojas",
+    "status": "ATIVO",
+    "managers": [
+      {
+        "managerId": 2,
+        "agents": [
+          { "agentId": 6 },
+          { "agentId": 8 }
+        ]
+      }
+    ],
+    "isActive": true,
+    "createdAt": "2023-11-17T00:00:00.000Z",
+    "updatedAt": "2023-12-05T00:00:00.000Z",
+    "imageUrl": "https://images.unsplash.com/photo-1600607688969-a5bfcd646154",
+    "images": [
+      "https://images.unsplash.com/photo-1600607688969-a5bfcd646154"
+    ]
+  }
+]

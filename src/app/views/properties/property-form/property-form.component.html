@@ -1,0 +1,121 @@
+<p-toast [breakpoints]="{'640px': {width: '90%', right: '0'}}"></p-toast>
+<div class="bg-white rounded-xl shadow-sm p-6">
+    <h1 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
+        <i class="pi pi-user-edit mr-2 text-indigo-600"></i>
+        <span>{{isEdit ? 'Editar Empreendimento' : 'Novo Empreendimento'}}</span>
+    </h1> 
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Nome do Empreendimento -->
+            <div class="space-y-2">
+                <label for="name" class="block text-sm font-medium text-gray-700">Nome do Empreendimento</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="pi pi-tag text-gray-400"></i>
+                    </div>
+                    <input id="name" type="text" formControlName="name"
+                        class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        [class.border-red-500]="form.get('name')?.invalid && form.get('name')?.touched">
+                </div>
+                <small *ngIf="form.get('name')?.invalid && form.get('name')?.touched"
+                    class="text-red-600 text-xs block">
+                    Nome é obrigatório
+                </small>
+            </div>
+
+            <!-- Endereço -->
+            <div class="space-y-2">
+                <label for="address" class="block text-sm font-medium text-gray-700">Endereço</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="pi pi-map-marker text-gray-400"></i>
+                    </div>
+                    <input id="address" type="text" formControlName="address"
+                        class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        [class.border-red-500]="form.get('address')?.invalid && form.get('address')?.touched">
+                </div>
+                <small *ngIf="form.get('address')?.invalid && form.get('address')?.touched"
+                    class="text-red-600 text-xs block">
+                    Endereço é obrigatório
+                </small>
+            </div>
+        </div>
+
+        <!-- Descrição -->
+        <div class="space-y-2">
+            <label for="description" class="block text-sm font-medium text-gray-700">Descrição</label>
+            <div class="relative">
+                <div class="absolute top-3 left-3 pointer-events-none">
+                    <i class="pi pi-align-left text-gray-400"></i>
+                </div>
+                <textarea id="description" formControlName="description" rows="4"
+                    class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Gestores Responsáveis -->
+            <div class="space-y-2">
+                <label for="managers" class="block text-sm font-medium text-gray-700">Gestores Responsáveis</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="pi pi-users text-gray-400"></i>
+                    </div>
+                    <select id="managers" formControlName="managers" multiple (change)="onManagersChange($event)"
+                        class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 h-auto min-h-[42px]"
+                        [class.border-red-500]="form.get('managers')?.invalid && form.get('managers')?.touched">
+                        <option *ngFor="let manager of managers" [value]="manager.id">{{manager.name}}</option>
+                    </select>
+                </div>
+                <small *ngIf="form.get('managers')?.invalid && form.get('managers')?.touched"
+                    class="text-red-600 text-xs block">
+                    Pelo menos um gestor deve ser selecionado
+                </small>
+                <small *ngIf="form.get('managers')?.value?.length > 0" class="text-gray-500 text-xs block">
+                    {{form.get('managers')?.value?.length}} gestor(es) selecionado(s)
+                </small>
+            </div>
+
+            <!-- <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                <h3 class="font-bold text-blue-800">Debug Info:</h3>
+                <p>Gestores selecionados: {{ form.get('managers')?.value | json }}</p>
+                <p>Corretores disponíveis: {{ agents | json }}</p>
+                <p>Corretores selecionados: {{ form.get('agents')?.value | json }}</p>
+            </div> -->
+
+            <!-- Corretores Vinculados (condicional) -->
+            <div class="space-y-2" *ngIf="form.get('managers')?.value?.length > 0">
+                <label for="agents" class="block text-sm font-medium text-gray-700">
+                    Corretores Vinculados
+                    <span *ngIf="loadingAgents" class="text-xs text-gray-500 ml-2">(carregando...)</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="pi pi-user text-gray-400"></i>
+                    </div>
+                    <select id="agents" formControlName="agents" multiple [compareWith]="compareById"
+                        class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 h-auto min-h-[42px]">
+                        <option *ngFor="let agent of agents" [ngValue]="agent">{{agent.name}}</option>
+                    </select>
+                </div>
+                <small *ngIf="form.get('agents')?.value?.length > 0" class="text-gray-500 text-xs block">
+                    {{form.get('agents')?.value?.length}} corretor(es) selecionado(s)
+                </small>
+                <small *ngIf="agents.length === 0 && !loadingAgents" class="text-gray-500 text-xs block">
+                    Nenhum corretor vinculado aos gestores selecionados
+                </small>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+            <button type="button" (click)="cancel()"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-300">
+                Cancelar
+            </button>
+            <button type="submit" [disabled]="form.invalid"
+                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-300 disabled:opacity-50">
+                {{isEdit ? 'Atualizar' : 'Salvar'}}
+            </button>
+        </div>
+    </form>
+</div>

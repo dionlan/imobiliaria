@@ -1,0 +1,192 @@
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.text-muted-foreground {
+    color: var(--text-color-secondary);
+}
+
+.aspect-video {
+    aspect-ratio: 16/9;
+}
+
+.space-y-6>*+* {
+    margin-top: 1.5rem;
+}
+
+.grid {
+    display: grid;
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+.md\:grid-cols-3 {
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.md\:col-span-2 {
+    @media (min-width: 768px) {
+        grid-column: span 2 / span 2;
+    }
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.tracking-tight {
+    letter-spacing: -0.025em;
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.object-cover {
+    object-fit: cover;
+}
+
+.bg-green-100 {
+    background-color: var(--green-100);
+}
+
+.text-green-800 {
+    color: var(--green-800);
+}
+
+.bg-red-100 {
+    background-color: var(--red-100);
+}
+
+.text-red-800 {
+    color: var(--red-800);
+}
+
+.bg-yellow-100 {
+    background-color: var(--yellow-100);
+}
+
+.text-yellow-800 {
+    color: var(--yellow-800);
+}
+
+.bg-gray-100 {
+    background-color: var(--surface-100);
+}
+
+.text-gray-800 {
+    color: var(--surface-800);
+}
+
+.px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+.py-1 {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-gray-600 {
+    color: var(--text-color-secondary);
+}
+
+.border {
+    border: 1px solid var(--surface-border);
+}
+
+.rounded-md {
+    border-radius: 0.375rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.p-8 {
+    padding: 2rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.p-button-outlined {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+
+    &:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+}

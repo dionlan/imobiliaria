@@ -1,0 +1,46 @@
+.advanced-filter-container {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    padding: 0.5rem;
+    background-color: var(--surface-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        width: 100%;
+
+        .filter-field {
+            display: flex;
+            flex-direction: column;
+            min-width: 180px;
+
+            .filter-label {
+                font-size: 0.875rem;
+                color: var(--text-color-secondary);
+                margin-bottom: 0.25rem;
+            }
+
+            &.date-range {
+                .date-fields {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+
+                    .date-separator {
+                        color: var(--text-color-secondary);
+                        font-size: 0.875rem;
+                    }
+                }
+            }
+        }
+
+        .reset-button {
+            margin-left: auto;
+            align-self: flex-end;
+        }
+    }
+}

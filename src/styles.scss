@@ -1,1 +1,79 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'primeng/resources/themes/lara-light-blue/theme.css';
+@import 'primeng/resources/primeng.css';
+@import 'primeicons/primeicons.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos globais */
+body {
+  @apply bg-gray-50 text-gray-900 font-sans antialiased;
+}
+
+// Sobrescritas do PrimeNG
+.p-card {
+  @apply shadow-md rounded-lg border border-gray-200 bg-white;
+
+  &-header {
+    @apply border-b border-gray-200 px-6 py-4;
+  }
+
+  &-content {
+    @apply p-6;
+  }
+}
+
+.p-button {
+  @apply transition-all duration-200;
+
+  &-primary {
+    @apply bg-primary-500 hover:bg-primary-600;
+  }
+}
+
+/*.p-card {
+  @apply shadow-md rounded-lg border border-gray-200;
+}
+
+.p-button {
+  @apply transition-colors duration-200;
+}*/
+
+.p-datatable {
+  @apply shadow-sm rounded-lg overflow-hidden;
+
+  .p-datatable-thead>tr>th {
+    @apply bg-gray-100 text-gray-700 font-semibold;
+  }
+
+  .p-datatable-tbody>tr {
+    @apply hover:bg-gray-50;
+  }
+}
+
+.sidebar-item {
+  @apply flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors;
+
+  &.active {
+    @apply bg-blue-50 text-blue-600 font-medium;
+  }
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,97 @@
+[
+  {
+    "id": 1,
+    "name": "Administrador",
+    "email": "admin@admin.com",
+    "role": "ADMINISTRADOR",
+    "isActive": true,
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/1.jpg"
+  },
+  {
+    "id": 2,
+    "name": "João Gestor",
+    "email": "joao@imobiliaria.com",
+    "role": "GESTOR",
+    "isActive": true,
+    "createdAt": "2023-01-02T00:00:00.000Z",
+    "updatedAt": "2023-01-02T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/2.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Maria Corretora",
+    "email": "maria@imobiliaria.com",
+    "role": "CORRETOR",
+    "managers": [2],
+    "isActive": true,
+    "createdAt": "2023-01-03T00:00:00.000Z",
+    "updatedAt": "2023-01-03T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/3.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Carlos Gestor",
+    "email": "carlos@imobiliaria.com",
+    "role": "GESTOR",
+    "isActive": true,
+    "createdAt": "2023-01-04T00:00:00.000Z",
+    "updatedAt": "2023-01-04T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/4.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Ana Corretora",
+    "email": "ana@imobiliaria.com",
+    "role": "CORRETOR",
+    "managers": [2, 4],
+    "isActive": true,
+    "createdAt": "2023-01-05T00:00:00.000Z",
+    "updatedAt": "2023-01-05T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/5.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Pedro Corretor",
+    "email": "pedro@imobiliaria.com",
+    "role": "CORRETOR",
+    "managers": [4],
+    "isActive": true,
+    "createdAt": "2023-01-06T00:00:00.000Z",
+    "updatedAt": "2023-01-06T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/6.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Fernanda Gestora",
+    "email": "fernanda@imobiliaria.com",
+    "role": "GESTOR",
+    "isActive": true,
+    "createdAt": "2023-01-07T00:00:00.000Z",
+    "updatedAt": "2023-01-07T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/7.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Ricardo Corretor",
+    "email": "ricardo@imobiliaria.com",
+    "role": "CORRETOR",
+    "managers": [7],
+    "isActive": true,
+    "createdAt": "2023-01-08T00:00:00.000Z",
+    "updatedAt": "2023-01-08T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/8.jpg"
+  },
+  {
+    "id": 9,
+    "name": "Juliana Corretora",
+    "email": "juliana@imobiliaria.com",
+    "role": "CORRETOR",
+    "managers": [2, 7],
+    "isActive": false,
+    "createdAt": "2023-01-09T00:00:00.000Z",
+    "updatedAt": "2023-01-10T00:00:00.000Z",
+    "profileImage": "https://randomuser.me/api/portraits/lego/9.jpg"
+  }
+]

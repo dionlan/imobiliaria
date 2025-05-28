@@ -1,0 +1,59 @@
+<header class="header">
+    <div class="header__container">
+        <div class="header__left">
+            <button (click)="toggleSidebar()" class="header__menu-button">
+                <i class="pi pi-bars"></i>
+            </button>
+
+            <!-- Botão com logo e nome do app que também toggla o sidebar -->
+            <button (click)="sidebarService.toggle()" class="header__logo-button" aria-label="Alternar menu">
+                <div class="header__logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+                <span class="header__app-name">{{ appName }}</span>
+            </button>
+        </div>
+
+        <div class="header__right">
+            <button class="header__notification" aria-label="Notificações">
+                <i class="pi pi-bell"></i>
+                @if (hasUnreadNotifications) {
+                <span class="header__notification-badge"></span>
+                }
+            </button>
+
+            <div class="header__profile">
+                <button class="header__profile-toggle" (click)="toggleProfileMenu()"
+                    (keydown.enter)="toggleProfileMenu()" [attr.aria-expanded]="isProfileMenuOpen"
+                    aria-label="Menu do usuário">
+                    <div class="header__profile-avatar">
+                        {{ userInitial }}
+                    </div>
+                    <span class="header__profile-name">{{ userName }}</span>
+                    <i class="pi pi-chevron-down"></i>
+                </button>
+
+                @if (isProfileMenuOpen) {
+                <div class="header__profile-menu">
+                    <a routerLink="/profile" class="header__profile-menu-item" (click)="closeProfileMenu()">
+                        <i class="pi pi-user"></i>
+                        <span>Meu Perfil</span>
+                    </a>
+                    <a routerLink="/settings" class="header__profile-menu-item" (click)="closeProfileMenu()">
+                        <i class="pi pi-cog"></i>
+                        <span>Configurações</span>
+                    </a>
+                    <div class="header__profile-menu-divider"></div>
+                    <button (click)="authService.logout()" class="header__profile-menu-item">
+                        <i class="pi pi-sign-out"></i>
+                        <span>Sair</span>
+                    </button>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</header>

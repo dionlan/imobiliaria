@@ -1,0 +1,71 @@
+<div class="bg-white p-4 rounded-xl shadow-md">
+    <form [formGroup]="form" class="flex flex-wrap gap-4 items-end w-full">
+        <!-- Campo de busca -->
+        <div class="flex flex-col space-y-1 min-w-[200px] flex-1">
+            <label for="searchTerm" class="text-sm font-medium text-gray-700">Buscar</label>
+            <div class="relative">
+                <input id="searchTerm" formControlName="searchTerm" type="text" (input)="applyFilter()"
+                    class="block w-full text-sm h-[42px] px-4 text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none focus:border-transparent focus:outline focus:outline-2 focus:outline-indigo-500 focus:ring-0 hover:border-indigo-300 peer"
+                    placeholder="Digite para buscar..." />
+                <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Filtro por status -->
+        <div class="flex flex-col space-y-1 min-w-[200px]">
+            <label for="status" class="text-sm font-medium text-gray-700">Status</label>
+            <div class="relative">
+                <select id="status" formControlName="status" (change)="applyFilter()"
+                    class="block w-full text-sm h-[42px] px-4 text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none focus:border-transparent focus:outline focus:outline-2 focus:outline-indigo-500 focus:ring-0 hover:border-indigo-300 peer">
+                    <option value="">Selecione o status</option>
+                    <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtro por data -->
+        <div class="flex flex-col space-y-1 min-w-[300px]">
+            <label class="text-sm font-medium text-gray-700">Período</label>
+            <div class="flex items-center gap-2">
+                <div class="relative flex-1">
+                    <input type="date" formControlName="startDate" (change)="applyFilter()"
+                        class="block w-full text-sm h-[42px] px-4 text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none focus:border-transparent focus:outline focus:outline-2 focus:outline-indigo-500 focus:ring-0 hover:border-indigo-300 peer" />
+                    <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <span class="text-gray-500 text-sm">até</span>
+                <div class="relative flex-1">
+                    <input type="date" formControlName="endDate" (change)="applyFilter()"
+                        class="block w-full text-sm h-[42px] px-4 text-gray-900 bg-white rounded-lg border border-gray-300 appearance-none focus:border-transparent focus:outline focus:outline-2 focus:outline-indigo-500 focus:ring-0 hover:border-indigo-300 peer" />
+                    <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão de reset -->
+        <button type="button" (click)="resetFilter()"
+            class="flex items-center gap-2 h-[42px] px-4 text-indigo-600 hover:text-indigo-800 transition-colors duration-200">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span class="text-sm font-medium">Limpar</span>
+        </button>
+    </form>
+</div>

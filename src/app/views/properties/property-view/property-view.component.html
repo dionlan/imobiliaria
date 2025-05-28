@@ -1,0 +1,176 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="space-y-6 animate-fade-in">
+    <!-- Loading State -->
+    @if (loading) {
+    <div class="flex justify-center items-center h-64">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+    }
+
+    <!-- Error State -->
+    @if (error) {
+    <p-messages severity="error" [closable]="false">
+        <ng-template pTemplate>
+            <div class="flex items-center gap-2">
+                <i class="pi pi-exclamation-triangle"></i>
+                <span>{{ error }}</span>
+            </div>
+        </ng-template>
+    </p-messages>
+    }
+
+    <!-- Content -->
+    @if (property && !loading) {
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight">{{ property.name }}</h1>
+            <p class="text-muted-foreground">
+                {{ property.address }}, {{ property.city }}/{{ property.state }}
+            </p>
+        </div>
+
+        @if (canEditProperty) {
+        <button pButton icon="pi pi-pencil" label="Editar" (click)="editProperty()" class="p-button-sm"></button>
+        }
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-3">
+        <!-- Main Property Card -->
+        <div class="md:col-span-2">
+            <p-card>
+                <!-- Property Image -->
+                <div class="aspect-video w-full overflow-hidden rounded-t-lg">
+                    <img [src]="property.imageUrl || 'assets/images/property-placeholder.jpg'" [alt]="property.name"
+                        class="h-full w-full object-cover" />
+                </div>
+
+                <!-- Property Details -->
+                <div class="p-4">
+                    <div class="flex justify-between items-start">
+                        <h2 class="text-xl font-semibold">{{ property.name }}</h2>
+                        <span [ngClass]="getStatusBadgeClass(property.status)" class="px-3 py-1 rounded-full text-sm">
+                            {{ getStatusDisplayName(property.status) }}
+                        </span>
+                    </div>
+
+                    <p class="mt-2 text-gray-600">{{ property.description }}</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <!-- Address -->
+                        <div class="flex items-start">
+                            <i class="pi pi-map-marker mr-2 text-primary"></i>
+                            <div>
+                                <h3 class="font-medium">Endereço</h3>
+                                <p class="text-sm text-muted-foreground">{{ property.address }}</p>
+                                <p class="text-sm text-muted-foreground">
+                                    {{ property.city }}, {{ property.state }} - {{ property.zipCode }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="flex items-start">
+                            <i class="pi pi-calendar mr-2 text-primary"></i>
+                            <div>
+                                <h3 class="font-medium">Datas</h3>
+                                <p class="text-sm text-muted-foreground">
+                                    Criado em: {{ property.createdAt | date:'dd/MM/yyyy' }}
+                                </p>
+                                <p class="text-sm text-muted-foreground">
+                                    Atualizado em: {{ property.updatedAt | date:'dd/MM/yyyy' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p-card>
+        </div>
+
+        <!-- Management Card -->
+        <div>
+            <p-card header="Gestão" subheader="Gestores e corretores vinculados">
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-medium mb-2 flex items-center">
+                            <i class="pi pi-users mr-2"></i>
+                            Gestores
+                        </h3>
+                        <p-table [value]="property.managers" [rows]="5" [paginator]="true">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Nome</th>
+                                    @if (canEditProperty) {
+                                    <th style="width: 50px"></th>
+                                    }
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-manager>
+                                <tr>
+                                    <td>{{ manager.manager.name }}</td>
+                                    @if (canEditProperty) {
+                                    <td>
+                                        @if (property.managers.length > 1) {
+                                        <button pButton icon="pi pi-times" class="p-button-text p-button-danger"
+                                            (click)="confirmRemoveManager(manager.managerId)"></button>
+                                        }
+                                    </td>
+                                    }
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </p-card>
+        </div>
+    </div>
+
+    <!-- Agents Card -->
+    <p-card header="Corretores" subheader="Corretores vinculados aos gestores">
+        <p-tabView [(activeIndex)]="selectedManagerId">
+            @for (manager of property.managers; track manager.managerId) {
+            <p-tabPanel [header]="manager.managerId.toString()">
+                @if (manager.agents.length === 0) {
+                <div class="text-center p-8 text-muted-foreground border rounded-md">
+                    Nenhum corretor vinculado a este gestor.
+                </div>
+                } @else {
+                <p-table [value]="manager.agents" [rows]="5" [paginator]="true">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            @if (canManageAgents) {
+                            <th style="width: 50px"></th>
+                            }
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-agent>
+                        <tr>
+                            <td>{{ agent.agent.name }}</td>
+                            <td>{{ agent.agent.email }}</td>
+                            @if (canManageAgents) {
+                            <td>
+                                <button pButton icon="pi pi-times" class="p-button-text p-button-danger"
+                                    (click)="confirmRemoveAgent(manager.managerId, agent.agentId)"></button>
+                            </td>
+                            }
+                        </tr>
+                    </ng-template>
+                </p-table>
+                }
+            </p-tabPanel>
+            }
+        </p-tabView>
+
+        @if (canManageAgents && selectedManagerId) {
+        <div class="mt-4">
+            <p-menu #menu [popup]="true" [model]="availableAgentsMenuItems"></p-menu>
+            <button pButton icon="pi pi-plus" label="Adicionar Corretor" (click)="openAddAgentDialog()"
+                class="p-button-outlined"></button>
+        </div>
+        }
+    </p-card>
+    }
+</div>

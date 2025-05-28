@@ -1,0 +1,12 @@
+<div class="layout">
+  <app-header></app-header>
+
+  <div class="layout__container">
+    <app-sidebar class="layout__sidebar" [class.sidebar--open]="sidebarService.visible"></app-sidebar>
+
+    <main class="layout__main" [class.layout__main--sidebar-open]="sidebarService.visible">
+      <router-outlet></router-outlet>
+      <app-footer></app-footer>
+    </main>
+  </div>
+</div>

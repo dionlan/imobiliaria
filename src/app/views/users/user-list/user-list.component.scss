@@ -1,0 +1,103 @@
+.user-list-container {
+    @apply min-h-screen bg-gray-50 p-4 md:p-8;
+
+    .user-list-header {
+        @apply flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4;
+
+        h1 {
+            @apply text-2xl md:text-3xl font-bold text-gray-800;
+        }
+
+        p {
+            @apply text-gray-500 mt-2;
+        }
+    }
+
+    .user-list-table-container {
+        @apply space-y-4;
+
+        table {
+            @apply min-w-full divide-y divide-gray-200;
+
+            thead {
+                tr {
+                    th {
+                        @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    @apply hover:bg-gray-50 transition-colors duration-150;
+
+                    td {
+                        @apply px-6 py-4 whitespace-nowrap;
+
+                        .badge {
+                            @apply px-3 py-1 rounded-full text-xs font-medium;
+                        }
+                    }
+                }
+            }
+        }
+
+        .pagination {
+            @apply flex items-center justify-between mt-4 px-2;
+
+            .info {
+                @apply text-sm text-gray-500;
+            }
+
+            .pages {
+                @apply flex gap-1;
+
+                button {
+                    @apply px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200;
+
+                    &.active {
+                        @apply bg-indigo-600 text-white shadow-sm;
+                    }
+
+                    &:not(.active) {
+                        @apply bg-white text-gray-700 hover:bg-gray-50 border border-gray-200;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Loading overlay styles */
+.loading-overlay {
+    @apply fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50;
+
+    .loading-content {
+        @apply bg-white p-8 rounded-xl shadow-lg flex flex-col items-center;
+
+        .spinner {
+            @apply w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4;
+        }
+
+        p {
+            @apply text-gray-700;
+        }
+    }
+}
+
+/* Empty state styles */
+.empty-state {
+    @apply flex flex-col items-center justify-center py-12 text-gray-500;
+
+    svg {
+        @apply h-16 w-16 mb-4;
+    }
+
+    p {
+        @apply text-lg;
+
+        &.subtext {
+            @apply text-sm mt-2;
+        }
+    }
+}
