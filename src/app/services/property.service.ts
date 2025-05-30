@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, delay, switchMap } from 'rxjs/operators';
 import { Property, PropertyStatus, PropertyManager } from '../models/property.model';
-import { UserRole } from '../models/user.model';
+import { User, UserRole } from '../models/user.model';
 import propertiesData from '../../assets/data/properties.json';
 
 @Injectable({ providedIn: 'root' })
@@ -112,21 +112,21 @@ export class PropertyService {
     );
   }
 
-  removeManagerFromProperty(propertyId: number, managerId: number): Observable<Property> {
+  /*removeManagerFromProperty(propertyId: number, managerId: number): Observable<Property> {
     return this.getPropertyById(propertyId).pipe(
       map((property: Property): PropertyManager[] => {
-      if (property.managers.length <= 1) {
-        throw new Error('O empreendimento deve ter pelo menos um gestor');
-      }
+        if (property.managers.length <= 1) {
+          throw new Error('O empreendimento deve ter pelo menos um gestor');
+        }
 
-      return property.managers.filter((m: PropertyManager) => m.managerId !== managerId);
+        return property.managers.filter((m: PropertyManager) => m.managerId !== managerId);
       }),
       switchMap((managers: PropertyManager[]) =>
-      this.updateProperty(propertyId, { managers })
+        this.updateProperty(propertyId, { managers })
       ),
       delay(500)
     );
-  }
+  }*/
 
   addAgentToManager(propertyId: number, managerId: number, agentId: number): Observable<Property> {
     return this.getPropertyById(propertyId).pipe(
@@ -154,7 +154,7 @@ export class PropertyService {
     );
   }
 
-  removeAgentFromManager(propertyId: number, managerId: number, agentId: number): Observable<Property> {
+  /*removeAgentFromManager(propertyId: number, managerId: number, agentId: number): Observable<Property> {
     return this.getPropertyById(propertyId).pipe(
       switchMap(property => {
         const managerIndex = property.managers.findIndex(m => m.managerId === managerId);
@@ -173,6 +173,58 @@ export class PropertyService {
         });
       }),
       delay(500)
+    );
+  }*/
+
+  enrichPropertyWithUsers(property: Property, users: User[]): Property {
+    return {
+      ...property,
+      managers: property.managers.map(manager => ({
+        ...manager,
+        manager: users.find(u => u.id === manager.managerId),
+        agents: manager.agents.map(agent => ({
+          ...agent,
+          agent: users.find(u => u.id === agent.agentId)
+        }))
+      }))
+    };
+  }
+
+  removeManagerFromProperty(propertyId: number, managerId: number): Observable<Property> {
+    return this.getPropertyById(propertyId).pipe(
+      map(property => {
+        // Filtra para remover o gestor
+        const updatedManagers = property.managers.filter(m => m.managerId !== managerId);
+
+        // Garante que pelo menos um gestor permaneça
+        if (updatedManagers.length === 0) {
+          throw new Error('O empreendimento deve ter pelo menos um gestor');
+        }
+
+        return {
+          ...property,
+          managers: updatedManagers
+        };
+      })
+    );
+  }
+
+  removeAgentFromManager(propertyId: number, managerId: number, agentId: number): Observable<Property> {
+    return this.getPropertyById(propertyId).pipe(
+      map(property => {
+        return {
+          ...property,
+          managers: property.managers.map(manager => {
+            if (manager.managerId === managerId) {
+              return {
+                ...manager,
+                agents: manager.agents.filter(a => a.agentId !== agentId)
+              };
+            }
+            return manager;
+          })
+        };
+      })
     );
   }
 

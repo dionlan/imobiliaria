@@ -1,38 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PropertyService } from '../../../services/property.service';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
-import { Property, PropertyStatus } from '../../../models/property.model';
+import { Property, PropertyStatus, PropertyManager, PropertyAgent } from '../../../models/property.model';
 import { User, UserRole } from '../../../models/user.model';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { TabViewModule } from 'primeng/tabview';
-import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { MessagesModule } from 'primeng/messages';
-import { DatePipe } from '@angular/common';
+import { TagSeverity } from '../../../types/severity-types';
+import { finalize, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-property-view',
   standalone: true,
   imports: [
-CommonModule,
+    CommonModule,
     RouterModule,
     ToastModule,
     ConfirmDialogModule,
-    CardModule,
-    TableModule,
-    TabViewModule,
-    ButtonModule,
-    MenuModule,
-    ProgressSpinnerModule,
-    MessagesModule,
     DatePipe
   ],
   templateUrl: './property-view.component.html',
@@ -42,11 +29,13 @@ CommonModule,
 export class PropertyViewComponent implements OnInit {
   property: Property | null = null;
   loading = true;
+  loadingAgents = false;
   error: string | null = null;
-  selectedManagerId!: number;
+  selectedManagerIndex = 0;
+  availableManagers: User[] = [];
   availableAgents: User[] = [];
-  availableAgentsMenuItems: MenuItem[] = [];
-  agentInputOpen = false;
+  showAddManagerDialog = false;
+  showAddAgentDialog = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -63,39 +52,98 @@ export class PropertyViewComponent implements OnInit {
   }
 
   get canEditProperty(): boolean {
-    return this.authService.isAdmin();
+    return this.authService.hasRole(UserRole.ADMIN);
   }
 
-  get canManageAgents(): boolean {
-    return this.authService.isAdmin() || this.authService.isManager();
+  get canManageTeam(): boolean {
+    return this.authService.hasRole(UserRole.ADMIN) || this.authService.hasRole(UserRole.MANAGER);
   }
 
-  private loadPropertyData(): void {
+  get selectedManager(): PropertyManager | null {
+    if (!this.property || !this.property.managers.length) return null;
+    return this.property.managers[this.selectedManagerIndex];
+  }
+
+  get totalAgents(): number {
+    if (!this.property) return 0;
+    return this.property.managers.reduce((total, manager) => total + manager.agents.length, 0);
+  }
+
+  loadPropertyData(): void {
     const propertyId = this.route.snapshot.paramMap.get('id');
 
     if (!propertyId) {
-      this.error = 'ID da propriedade não fornecido';
+      this.error = 'ID do empreendimento não fornecido';
       this.loading = false;
       return;
     }
 
-    this.propertyService.getPropertyById(+propertyId)
-      .subscribe({
-        next: (property) => {
-          this.property = property;
-          this.selectedManagerId = property.managers[0]?.managerId;
-          this.loading = false;
-        },
-        error: (err) => {
-          this.error = 'Erro ao carregar propriedade';
-          this.loading = false;
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Falha ao carregar dados da propriedade'
-          });
-        }
-      });
+    this.loading = true;
+    this.propertyService.getPropertyById(+propertyId).pipe(
+      switchMap(property => {
+        return this.userService.getUsers().pipe(
+          map(users => this.propertyService.enrichPropertyWithUsers(property, users))
+        );
+      }),
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: (property) => {
+        this.property = property;
+        this.loadAvailableManagers();
+      },
+      error: (err) => {
+        this.error = 'Erro ao carregar dados do empreendimento';
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao carregar empreendimento',
+          life: 5000
+        });
+      }
+    });
+  }
+
+  loadAvailableManagers(): void {
+    if (!this.property) return;
+
+    this.userService.getUsersByRole(UserRole.MANAGER).subscribe({
+      next: (managers) => {
+        // Filtra gestores já vinculados
+        this.availableManagers = managers.filter(manager =>
+          !this.property!.managers.some(m => m.managerId === manager.id)
+        );
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao carregar gestores disponíveis',
+          life: 5000
+        });
+      }
+    });
+  }
+
+  loadAvailableAgents(): void {
+    if (!this.selectedManager) return;
+
+    this.loadingAgents = true;
+    this.userService.getAvailableAgents(this.selectedManager.managerId).pipe(
+      finalize(() => this.loadingAgents = false)
+    ).subscribe({
+      next: (agents) => {
+        this.availableAgents = agents;
+        this.showAddAgentDialog = true;
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao carregar corretores disponíveis',
+          life: 5000
+        });
+      }
+    });
   }
 
   getStatusBadgeClass(status: PropertyStatus): string {
@@ -103,6 +151,7 @@ export class PropertyViewComponent implements OnInit {
       case PropertyStatus.ACTIVE: return 'bg-green-100 text-green-800';
       case PropertyStatus.INACTIVE: return 'bg-red-100 text-red-800';
       case PropertyStatus.PENDING: return 'bg-yellow-100 text-yellow-800';
+      case PropertyStatus.MAINTENANCE: return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   }
@@ -112,6 +161,7 @@ export class PropertyViewComponent implements OnInit {
       case PropertyStatus.ACTIVE: return 'Ativo';
       case PropertyStatus.INACTIVE: return 'Inativo';
       case PropertyStatus.PENDING: return 'Pendente';
+      case PropertyStatus.MAINTENANCE: return 'Em Manutenção';
       default: return 'Desconhecido';
     }
   }
@@ -123,109 +173,205 @@ export class PropertyViewComponent implements OnInit {
   }
 
   openAddAgentDialog(): void {
-    if (!this.selectedManagerId) return;
+    if (!this.selectedManager) return;
 
-    this.userService.getAvailableAgents(this.selectedManagerId)
-      .subscribe((agents: User[]) => {
+    this.userService.getAvailableAgents(this.selectedManager.managerId).subscribe({
+      next: (agents) => {
         this.availableAgents = agents;
-        this.availableAgentsMenuItems = agents.map(agent => ({
-          label: agent.name,
-          command: () => this.handleAddAgent(agent.id)
-        }));
-        this.agentInputOpen = true;
-      });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao carregar corretores disponíveis'
+        });
+      }
+    });
   }
 
-  handleAddAgent(agentId: number): void {
-    if (!this.property || !this.selectedManagerId) return;
+  addManagerToProperty(managerId: number): void {
+    if (!this.property) return;
 
-    this.propertyService.addAgentToManager(this.property.id, this.selectedManagerId, agentId)
-      .subscribe({
-        next: () => {
-          this.loadPropertyData();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Corretor adicionado com sucesso'
-          });
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Falha ao adicionar corretor'
-          });
-        }
-      });
+    this.propertyService.addManagerToProperty(this.property.id, managerId).subscribe({
+      next: () => {
+        this.loadPropertyData();
+        this.showAddManagerDialog = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Gestor vinculado com sucesso',
+          life: 5000
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao vincular gestor',
+          life: 5000
+        });
+      }
+    });
+  }
 
-    this.agentInputOpen = false;
+  addAgentToManager(agentId: number): void {
+    if (!this.property || !this.selectedManager) return;
+
+    this.propertyService.addAgentToManager(
+      this.property.id,
+      this.selectedManager.managerId,
+      agentId
+    ).subscribe({
+      next: () => {
+        this.loadPropertyData();
+        this.showAddAgentDialog = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Corretor vinculado com sucesso',
+          life: 5000
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao vincular corretor',
+          life: 5000
+        });
+      }
+    });
   }
 
   confirmRemoveManager(managerId: number): void {
+    if (!this.property) return;
+
+    if (this.property.managers.length <= 1) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'O empreendimento deve ter pelo menos um gestor',
+        life: 5000
+      });
+      return;
+    }
+
     this.confirmationService.confirm({
-      message: 'Tem certeza que deseja desvincular este gestor do empreendimento? Todos os corretores associados a este gestor também serão desvinculados.',
-      header: 'Remover Gestor',
+      message: 'Tem certeza que deseja remover este gestor? Todos os corretores vinculados também serão removidos.',
+      header: 'Confirmar Remoção',
+      icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Remover',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-danger',
-      accept: () => this.handleRemoveManager(managerId)
+      accept: () => this.removeManager(managerId)
     });
   }
 
-  handleRemoveManager(managerId: number): void {
+  removeManager(managerId: number): void {
     if (!this.property) return;
 
-    this.propertyService.removeManagerFromProperty(this.property.id, managerId)
-      .subscribe({
-        next: () => {
-          this.loadPropertyData();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Gestor removido com sucesso'
-          });
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Falha ao remover gestor'
-          });
+    this.propertyService.removeManagerFromProperty(this.property.id, managerId).subscribe({
+      next: () => {
+        // Atualiza a lista de gestores localmente antes de recarregar
+        this.property!.managers = this.property!.managers.filter(m => m.managerId !== managerId);
+
+        // Ajusta o índice selecionado se necessário
+        if (this.selectedManagerIndex >= this.property!.managers.length) {
+          this.selectedManagerIndex = Math.max(0, this.property!.managers.length - 1);
         }
-      });
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Gestor removido com sucesso',
+          life: 5000
+        });
+
+        // Recarrega os gestores disponíveis
+        this.loadAvailableManagers();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao remover gestor',
+          life: 5000
+        });
+      }
+    });
   }
 
-  confirmRemoveAgent(managerId: number, agentId: number): void {
+  confirmRemoveAgent(agentId: number): void {
+    if (!this.selectedManager) return;
+
     this.confirmationService.confirm({
-      message: 'Tem certeza que deseja desvincular este corretor do gestor?',
-      header: 'Remover Corretor',
-      acceptLabel: 'Remover',
+      message: 'Tem certeza que deseja desvincular este corretor?',
+      header: 'Confirmar Desvinculação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Desvincular',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-danger',
-      accept: () => this.handleRemoveAgent(managerId, agentId)
+      accept: () => this.removeAgent(agentId)
     });
   }
 
-  handleRemoveAgent(managerId: number, agentId: number): void {
-    if (!this.property) return;
+  removeAgent(agentId: number): void {
+    if (!this.property || !this.selectedManager) return;
 
-    this.propertyService.removeAgentFromManager(this.property.id, managerId, agentId)
-      .subscribe({
-        next: () => {
-          this.loadPropertyData();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Corretor removido com sucesso'
-          });
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Falha ao remover corretor'
-          });
-        }
-      });
+    this.propertyService.removeAgentFromManager(
+      this.property.id,
+      this.selectedManager.managerId,
+      agentId
+    ).subscribe({
+      next: () => {
+        this.loadPropertyData();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Corretor desvinculado com sucesso',
+          life: 5000
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao desvincular corretor',
+          life: 5000
+        });
+      }
+    });
+  }
+
+  getStatusSeverity(status: PropertyStatus): string {
+    switch (status) {
+      case PropertyStatus.ACTIVE: return 'success';
+      case PropertyStatus.INACTIVE: return 'danger';
+      case PropertyStatus.PENDING: return 'warning';
+      case PropertyStatus.MAINTENANCE: return 'info';
+      default: return null as any;
+    }
+  }
+
+  getRoleSeverity(status: PropertyStatus): TagSeverity {
+    switch (status) {
+      case PropertyStatus.ACTIVE: return 'success';
+      case PropertyStatus.INACTIVE: return 'danger';
+      case PropertyStatus.PENDING: return 'warning';
+      case PropertyStatus.MAINTENANCE: return 'info';
+      default: return 'warning';
+    }
+  }
+
+  trackByManagerId(index: number, manager: PropertyManager): number {
+    return manager.managerId;
+  }
+
+  trackByAgentId(index: number, agent: any): number {
+    return agent.agentId;
+  }
+
+  trackByUserId(index: number, user: User): number {
+    return user.id;
   }
 }

@@ -1,3 +1,5 @@
+import { User } from "./user.model";
+
 export enum PropertyStatus {
   ACTIVE = 'ATIVO',
   INACTIVE = 'INATIVO',
@@ -5,9 +7,15 @@ export enum PropertyStatus {
   MAINTENANCE = 'EM_MANUTENCAO'
 }
 
+export interface PropertyAgent {
+  agentId: number;
+  agent?: User; // Dados completos do corretor (populado posteriormente)
+}
+
 export interface PropertyManager {
   managerId: number;
-  agents: { agentId: number }[];
+  manager?: User; // Dados completos do gestor (populado posteriormente)
+  agents: PropertyAgent[];
 }
 
 export interface Property {
@@ -19,7 +27,7 @@ export interface Property {
   zipCode: string;
   description: string;
   status: PropertyStatus;
-  managers: PropertyManager[]; // Agora com estrutura mais completa
+  managers: PropertyManager[];
   agents?: number[]; // IDs dos corretores vinculados (opcional)
   isActive: boolean;
   createdAt: Date;

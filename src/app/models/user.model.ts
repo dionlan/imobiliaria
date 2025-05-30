@@ -11,6 +11,7 @@ export interface User {
   phone: string;
   role: UserRole;
   managers?: number[]; // Para corretores - IDs dos gestores vinculados
+  managedProperties?: number[]; // Para gestores - IDs dos empreendimentos que gerenciam
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

@@ -7,7 +7,8 @@
     "isActive": true,
     "createdAt": "2023-01-01T00:00:00.000Z",
     "updatedAt": "2023-01-01T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/1.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/1.jpg",
+    "phone": "61987654321"
   },
   {
     "id": 2,
@@ -17,7 +18,8 @@
     "isActive": true,
     "createdAt": "2023-01-02T00:00:00.000Z",
     "updatedAt": "2023-01-02T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/2.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/2.jpg",
+    "phone": "61912345678"
   },
   {
     "id": 3,
@@ -28,7 +30,8 @@
     "isActive": true,
     "createdAt": "2023-01-03T00:00:00.000Z",
     "updatedAt": "2023-01-03T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/3.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/3.jpg",
+    "phone": "61923456789"
   },
   {
     "id": 4,
@@ -38,7 +41,8 @@
     "isActive": true,
     "createdAt": "2023-01-04T00:00:00.000Z",
     "updatedAt": "2023-01-04T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/4.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/4.jpg",
+    "phone": "61934567890"
   },
   {
     "id": 5,
@@ -49,7 +53,8 @@
     "isActive": true,
     "createdAt": "2023-01-05T00:00:00.000Z",
     "updatedAt": "2023-01-05T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/5.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/5.jpg",
+    "phone": "61945678901"
   },
   {
     "id": 6,
@@ -60,7 +65,8 @@
     "isActive": true,
     "createdAt": "2023-01-06T00:00:00.000Z",
     "updatedAt": "2023-01-06T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/6.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/6.jpg",
+    "phone": "61956789012"
   },
   {
     "id": 7,
@@ -70,7 +76,8 @@
     "isActive": true,
     "createdAt": "2023-01-07T00:00:00.000Z",
     "updatedAt": "2023-01-07T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/7.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/7.jpg",
+    "phone": "61967890123"
   },
   {
     "id": 8,
@@ -81,7 +88,8 @@
     "isActive": true,
     "createdAt": "2023-01-08T00:00:00.000Z",
     "updatedAt": "2023-01-08T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/8.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/8.jpg",
+    "phone": "61978901234"
   },
   {
     "id": 9,
@@ -92,6 +100,7 @@
     "isActive": false,
     "createdAt": "2023-01-09T00:00:00.000Z",
     "updatedAt": "2023-01-10T00:00:00.000Z",
-    "profileImage": "https://randomuser.me/api/portraits/lego/9.jpg"
+    "profileImage": "https://randomuser.me/api/portraits/lego/9.jpg",
+    "phone": "61989012345"
   }
 ]

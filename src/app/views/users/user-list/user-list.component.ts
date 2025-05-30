@@ -7,15 +7,10 @@ import { Pagination } from '../../../models/pagination.model';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TooltipModule } from 'primeng/tooltip';
-import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { PasswordResetDialogComponent } from '../../../components/shared/password-reset-dialog/password-reset-dialog.component';
-import { FormsModule } from '@angular/forms';
+import { AdvancedFilterComponent } from '../../../components/shared/advanced-filter/advanced-filter.component';
+import { TranslateRolePipe } from '../../../pipes/translate-role.pipe';
 
 @Component({
     selector: 'app-user-list',
@@ -23,18 +18,12 @@ import { FormsModule } from '@angular/forms';
     imports: [
         CommonModule,
         RouterModule,
-        TableModule,
-        ButtonModule,
-        TagModule,
-        ConfirmDialogModule,
-        TooltipModule,
-        InputTextModule,
         ToastModule,
         PasswordResetDialogComponent,
-        FormsModule
+        AdvancedFilterComponent,
+        TranslateRolePipe
     ],
     templateUrl: './user-list.component.html',
-    styleUrls: ['./user-list.component.scss'],
     providers: [ConfirmationService, MessageService]
 })
 export class UserListComponent implements OnInit {
@@ -43,8 +32,8 @@ export class UserListComponent implements OnInit {
     loading = true;
     selectedUser: User | null = null;
     showResetDialog = false;
-    showDeleteConfirmation = false;
-    searchTerm = '';
+    sortField = 'name';
+    sortOrder = 1; // 1 para ascendente, -1 para descendente
 
     pagination: Pagination = {
         page: 1,
@@ -73,23 +62,56 @@ export class UserListComponent implements OnInit {
                     this.users = this.filterUsersByRole(users);
                     this.filteredUsers = [...this.users];
                     this.pagination.totalRecords = this.users.length;
+                    this.sort(this.sortField); // Aplica ordenação inicial
                 },
                 error: () => this.showErrorMessage('Falha ao carregar usuários')
             });
     }
 
-    filterUsers(): void {
-        if (!this.searchTerm) {
+    applyFilter(filter: any): void {
+        if (!filter || Object.keys(filter).length === 0) {
             this.filteredUsers = [...this.users];
             return;
         }
 
-        const term = this.searchTerm.toLowerCase();
-        this.filteredUsers = this.users.filter(user =>
-            user.name.toLowerCase().includes(term) ||
-            user.email.toLowerCase().includes(term) ||
-            user.role.toLowerCase().includes(term)
-        );
+        this.filteredUsers = this.users.filter(user => {
+            const matchesSearch = filter.searchTerm ?
+                user.name.toLowerCase().includes(filter.searchTerm.toLowerCase()) ||
+                user.email.toLowerCase().includes(filter.searchTerm.toLowerCase()) : true;
+
+            const matchesStatus = filter.status ?
+                user.isActive === (filter.status === 'active') : true;
+
+            const matchesRole = filter.role ?
+                user.role === filter.role : true;
+
+            return matchesSearch && matchesStatus && matchesRole;
+        });
+
+        this.pagination.totalRecords = this.filteredUsers.length;
+        this.pagination.page = 1; // Reset para primeira página
+    }
+
+    sort(field: string): void {
+        if (this.sortField === field) {
+            this.sortOrder *= -1;
+        } else {
+            this.sortField = field;
+            this.sortOrder = 1;
+        }
+
+        this.filteredUsers.sort((a, b) => {
+            const valueA = a[field as keyof User];
+            const valueB = b[field as keyof User];
+
+            if (valueA === undefined && valueB === undefined) return 0;
+            if (valueA === undefined) return 1 * this.sortOrder;
+            if (valueB === undefined) return -1 * this.sortOrder;
+
+            if (valueA < valueB) return -1 * this.sortOrder;
+            if (valueA > valueB) return 1 * this.sortOrder;
+            return 0;
+        });
     }
 
     private filterUsersByRole(users: User[]): User[] {
