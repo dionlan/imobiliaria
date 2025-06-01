@@ -27,6 +27,7 @@ import { AdvancedFilterComponent } from '../../../components/shared/advanced-fil
 
 export class PropertyListComponent implements OnInit {
   properties: Property[] = [];
+  result: any[] = [];
   filteredProperties: Property[] = [];
   loading = true;
   sortField = 'name';
@@ -46,8 +47,10 @@ export class PropertyListComponent implements OnInit {
 
   loadProperties(): void {
     this.loading = true;
-    this.propertyService.getProperties().subscribe({
+    this.propertyService.getPropertiesNovo().subscribe({
       next: (properties) => {
+        this.result = properties;
+        console.log('EMPREENDIMENTOS: ', this.result);
         this.properties = this.filterPropertiesByRole(properties);
         this.filteredProperties = [...this.properties];
         this.loading = false;
@@ -58,6 +61,18 @@ export class PropertyListComponent implements OnInit {
         // Mostrar toast de erro aqui
       }
     });
+    /* this.propertyService.getProperties().subscribe({
+      next: (properties) => {
+        this.properties = this.filterPropertiesByRole(properties);
+        this.filteredProperties = [...this.properties];
+        this.loading = false;
+        this.initializeManagerNamesMap();
+      },
+      error: () => {
+        this.loading = false;
+        // Mostrar toast de erro aqui
+      }
+    }); */
   }
 
   private initializeManagerNamesMap(): void {

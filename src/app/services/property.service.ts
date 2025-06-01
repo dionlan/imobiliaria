@@ -1,12 +1,19 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, delay, switchMap } from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
+import { Observable, of, throwError } from 'rxjs';
+import { map, delay, switchMap, catchError } from 'rxjs/operators';
 import { Property, PropertyStatus, PropertyManager } from '../models/property.model';
 import { User, UserRole } from '../models/user.model';
 import propertiesData from '../../assets/data/properties.json';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../environment';
 
 @Injectable({ providedIn: 'root' })
 export class PropertyService {
+
+  private apiUrl = `${environment.apiUrl}/properties`;
+
+  http = inject(HttpClient);
+
   private propertiesCache: Property[] = propertiesData.map(p => ({
     ...p,
     status: (p as any).status ? (p as any).status as PropertyStatus : PropertyStatus.ACTIVE,
@@ -20,6 +27,22 @@ export class PropertyService {
   }));
 
   constructor() { }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('Ocorreu um erro:', error);
+    if (error.error instanceof ErrorEvent) {
+      console.error('Client-side ou erro de rede', error.error.message);
+    } else {
+      console.error(`Backend respondeu o código ${error.status}, ERRO:`, error.error);
+    }
+    return throwError(() => new Error('Algo ruim aconteceu; por favor, tente novamente.'));
+  }
+
+  getPropertiesNovo(): Observable<Property[]> {
+    return this.http.get<Property[]>(this.apiUrl).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   private mapManagers(managers: any[]): PropertyManager[] {
     return managers.map(m => ({

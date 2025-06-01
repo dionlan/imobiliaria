@@ -44,7 +44,7 @@ export class PropertyViewComponent implements OnInit {
     private userService: UserService,
     public authService: AuthService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) { }
 
   ngOnInit(): void {
@@ -156,7 +156,7 @@ export class PropertyViewComponent implements OnInit {
     }
   }
 
-  getStatusDisplayName(status: PropertyStatus): string {
+  /* getStatusDisplayName(status: PropertyStatus): string {
     switch (status) {
       case PropertyStatus.ACTIVE: return 'Ativo';
       case PropertyStatus.INACTIVE: return 'Inativo';
@@ -164,7 +164,7 @@ export class PropertyViewComponent implements OnInit {
       case PropertyStatus.MAINTENANCE: return 'Em Manutenção';
       default: return 'Desconhecido';
     }
-  }
+  } */
 
   editProperty(): void {
     if (this.property) {
@@ -360,6 +360,18 @@ export class PropertyViewComponent implements OnInit {
       case PropertyStatus.PENDING: return 'warning';
       case PropertyStatus.MAINTENANCE: return 'info';
       default: return 'warning';
+    }
+  }
+
+  getStatusDisplayName(status: PropertyStatus | undefined): string {
+    if (!status) return 'Desconhecido';
+
+    switch (status) {
+      case PropertyStatus.ACTIVE: return 'Ativo';
+      case PropertyStatus.INACTIVE: return 'Inativo';
+      case PropertyStatus.PENDING: return 'Pendente';
+      case PropertyStatus.MAINTENANCE: return 'Em Manutenção';
+      default: return 'Desconhecido';
     }
   }
 

@@ -10,7 +10,7 @@ export class TranslateRolePipe implements PipeTransform {
         switch (role) {
             case UserRole.ADMIN: return 'Administrador';
             case UserRole.MANAGER: return 'Gerente';
-            case UserRole.AGENT: return 'Agente';
+            case UserRole.AGENT: return 'Corretor';
             default: return role;
         }
     }

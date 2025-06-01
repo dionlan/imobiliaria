@@ -13,7 +13,6 @@ import { ToastModule } from 'primeng/toast';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     ToastModule
   ],
   templateUrl: './property-form.component.html',
