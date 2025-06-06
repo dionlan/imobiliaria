@@ -1,51 +1,111 @@
+// dashboard.component.scss
 :host {
-    @apply block p-6;
+    display: block;
 }
 
-.dashboard {
-    @apply grid gap-6;
-
-    &-grid {
-        @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6;
+@keyframes fade-in {
+    from {
+        opacity: 0;
     }
 
-    &-card {
-        @apply bg-white rounded-xl shadow-sm p-6 h-full transition-all duration-300 hover:shadow-md;
+    to {
+        opacity: 1;
+    }
+}
 
-        &-content {
-            @apply flex justify-between items-center;
-
-            &-text {
-                @apply space-y-2;
-
-                .label {
-                    @apply text-gray-500 font-medium text-sm;
-                }
-
-                .value {
-                    @apply text-2xl font-bold text-gray-800;
-                }
-            }
-
-            &-icon {
-                @apply p-3 rounded-full flex-shrink-0;
-
-                &.primary {
-                    @apply bg-blue-100 text-blue-600;
-                }
-
-                &.success {
-                    @apply bg-green-100 text-green-600;
-                }
-            }
-        }
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
-    &-chart {
-        @apply bg-white rounded-xl shadow-sm p-6 mt-6;
-
-        &-header {
-            @apply text-lg font-semibold mb-4 text-gray-800;
-        }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
+}
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+    animation: scale-in 0.3s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+/* Melhorias na scrollbar (opcional) */
+::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a5b4fc;
+}
+
+/* Efeito de hover nos cards */
+.bg-white {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+}
+
+/* Melhorias no select */
+select {
+    transition: all 0.2s ease;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Efeito de pulse nos indicadores */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

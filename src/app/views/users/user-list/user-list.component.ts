@@ -28,6 +28,7 @@ import { TranslateRolePipe } from '../../../pipes/translate-role.pipe';
 })
 export class UserListComponent implements OnInit {
     users: User[] = [];
+    result: any[] = [];
     filteredUsers: User[] = [];
     loading = true;
     selectedUser: User | null = null;
@@ -51,21 +52,40 @@ export class UserListComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadUsers();
+
+        // Recarrega usuários quando a rota é ativada (volta da edição)
+        this.router.events.subscribe(() => {
+            if (this.router.url === '/users') {
+                this.loadUsers();
+            }
+        });
     }
 
     loadUsers(): void {
         this.loading = true;
-        this.userService.getUsers()
+        this.userService.getUsersNovo()
             .pipe(finalize(() => this.loading = false))
             .subscribe({
                 next: (users) => {
                     this.users = this.filterUsersByRole(users);
-                    this.filteredUsers = [...this.users];
+                    console.log('USUÁRIOS: ', this.result);
+                    this.applySorting();
                     this.pagination.totalRecords = this.users.length;
-                    this.sort(this.sortField); // Aplica ordenação inicial
                 },
                 error: () => this.showErrorMessage('Falha ao carregar usuários')
             });
+    }
+
+    applySorting(): void {
+        this.filteredUsers = [...this.users].sort((a, b) => {
+            const valueA = a[this.sortField as keyof User];
+            const valueB = b[this.sortField as keyof User];
+
+            if (valueA === undefined || valueA === null) return 1 * this.sortOrder;
+            if (valueB === undefined || valueB === null) return -1 * this.sortOrder;
+
+            return String(valueA).localeCompare(String(valueB)) * this.sortOrder;
+        });
     }
 
     applyFilter(filter: any): void {
@@ -108,8 +128,11 @@ export class UserListComponent implements OnInit {
             if (valueA === undefined) return 1 * this.sortOrder;
             if (valueB === undefined) return -1 * this.sortOrder;
 
-            if (valueA < valueB) return -1 * this.sortOrder;
-            if (valueA > valueB) return 1 * this.sortOrder;
+            if (valueA === null && valueB !== null) return 1 * this.sortOrder;
+            if (valueA !== null && valueB === null) return -1 * this.sortOrder;
+            if (valueA === null && valueB === null) return 0;
+            if (valueA! < valueB!) return -1 * this.sortOrder;
+            if (valueA! > valueB!) return 1 * this.sortOrder;
             return 0;
         });
     }

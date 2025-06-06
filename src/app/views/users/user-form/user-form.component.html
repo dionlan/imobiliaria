@@ -1,84 +1,592 @@
-<p-toast [breakpoints]="{'640px': {width: '90%', right: '0'}}"></p-toast>
-<div class="bg-white rounded-xl shadow-sm p-6">
-    <h1 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
-        <i class="pi pi-user-edit mr-2 text-indigo-600"></i>
-        <span>{{isEdit ? 'Editar Usuário' : 'Novo Usuário'}}</span>
-    </h1> 
+<div
+    class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
+            <!-- Cabeçalho dinâmico -->
+            <div [class]="getHeaderClass()" class="px-8 py-6 transition-all duration-500">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <!-- Ícone do perfil -->
+                        <div class="p-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <ng-container [ngSwitch]="editingUserRole">
+                                    <!-- Ícone para Gestor -->
+                                    <path *ngSwitchCase="UserRole.MANAGER" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Nome Completo -->
-            <div class="space-y-2">
-                <label for="name" class="block text-sm font-medium text-gray-700">Nome Completo</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <i class="pi pi-user text-gray-400"></i>
+                                    <!-- Ícone para Corretor -->
+                                    <path *ngSwitchCase="UserRole.AGENT" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+
+                                    <!-- Ícone para Administrador -->
+                                    <path *ngSwitchDefault stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </ng-container>
+                            </svg>
+                        </div>
+
+                        <!-- Título dinâmico -->
+                        <h1 class="text-2xl font-bold text-white">
+                            {{ isEdit ? ('Editar ' + getUserRoleName()) : 'Novo Usuário' }}
+                        </h1>
                     </div>
-                    <input id="name" type="text" formControlName="name"
-                        class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        [class.border-red-500]="form.get('name')?.invalid && form.get('name')?.touched">
-                </div>
-                <small *ngIf="form.get('name')?.invalid && form.get('name')?.touched"
-                    class="text-red-600 text-xs block">
-                    Nome é obrigatório
-                </small>
-            </div>
-
-            <!-- E-mail -->
-            <div class="space-y-2">
-                <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <i class="pi pi-envelope text-gray-400"></i>
+                    <div class="flex items-center space-x-2">
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full text-xm font-medium bg-white/20 text-white">
+                            {{ getDisplayRole() }}
+                        </span>
                     </div>
-                    <input id="email" type="email" formControlName="email"
-                        class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        [class.border-red-500]="form.get('email')?.invalid && form.get('email')?.touched">
-                </div>
-                <small *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
-                    class="text-red-600 text-xs block">
-                    Informe um e-mail válido
-                </small>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Perfil -->
-            <div class="space-y-2">
-                <label for="role" class="block text-sm font-medium text-gray-700">Perfil</label>
-                <select id="role" formControlName="role"
-                    class="block w-full px-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    [class.border-red-500]="form.get('role')?.invalid && form.get('role')?.touched">
-                    <option value="" disabled selected>Selecione um perfil</option>
-                    <option *ngFor="let role of roles" [value]="role.value">{{role.label}}</option>
-                </select>
-                <small *ngIf="form.get('role')?.invalid && form.get('role')?.touched"
-                    class="text-red-600 text-xs block">
-                    Selecione um perfil
-                </small>
-            </div>
-
-            <!-- Gestores Responsáveis (condicional) -->
-            <div class="space-y-2" *ngIf="form.get('role')?.value === 'CORRETOR'">
-                <label for="managers" class="block text-sm font-medium text-gray-700">Gestores Responsáveis</label>
-                <div class="relative">
-                    <select id="managers" formControlName="managers" multiple
-                        class="block w-full px-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        <option *ngFor="let manager of managers" [value]="manager.id">{{manager.name}}</option>
-                    </select>
+                    <!-- Indicador de modo visualização -->
+                    <span *ngIf="isViewMode()"
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white">
+                        Modo Visualização
+                    </span>
                 </div>
             </div>
-        </div>
 
-        <div class="flex justify-end gap-2 mt-6">
-            <button type="button" (click)="navigateBack()"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-300">
-                Cancelar
-            </button>
-            <button type="submit" [disabled]="form.invalid"
-                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-300 disabled:opacity-50">
-                Salvar
-            </button>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-8 space-y-8">
+                <!-- Seção de Informações Básicas -->
+                <div class="space-y-8">
+                    <div class="border-b border-gray-200 pb-6">
+                        <div class="flex items-center space-x-3">
+                            <div [ngClass]="{
+                                'bg-indigo-100 text-indigo-600': editingUserRole === 'GESTOR',
+                                'bg-green-100 text-green-600': editingUserRole === 'CORRETOR',
+                                'bg-purple-100 text-purple-600': editingUserRole === 'ADMINISTRADOR'
+                            }" class="p-2 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">
+                                Informações Básicas
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Campos básicos (sempre visíveis) -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                            <div [class.border-gray-300]="!isViewMode()" [class.border-transparent]="isViewMode()"
+                                class="px-4 py-3 border rounded-lg bg-gray-50">
+                                {{ form.get('name')?.value || 'Não informado' }}
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">E-mail</label>
+                            <div [class.border-gray-300]="!isViewMode()" [class.border-transparent]="isViewMode()"
+                                class="px-4 py-3 border rounded-lg bg-gray-50">
+                                {{ form.get('email')?.value || 'Não informado' }}
+                            </div>
+                        </div>
+
+                        <!-- Campos editáveis apenas por admin -->
+                        <ng-container *ngIf="canEdit()">
+                            <div class="space-y-2">
+                                <label for="phone" class="block text-sm font-medium text-gray-700">Telefone</label>
+                                <input id="phone" type="text" formControlName="phone"
+                                    class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="(00) 00000-0000">
+                            </div>
+
+                            <!-- Função (Role) - Só visível/editable quando criando novo usuário ou admin editando -->
+                            <div class="space-y-2" *ngIf="!isEdit || currentUser?.role === 'ADMINISTRADOR'">
+                                <label for="role" class="block text-sm font-medium text-gray-700">Função</label>
+                                <select id="role" formControlName="role"
+                                    class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                                    <option value="GESTOR">Gestor</option>
+                                    <option value="CORRETOR">Corretor</option>
+                                    <option *ngIf="currentUser?.role === 'ADMINISTRADOR'" value="ADMINISTRADOR">
+                                        Administrador</option>
+                                </select>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <!-- Seção de Empreendimentos Vinculados -->
+                <div class="space-y-6" *ngIf="shouldShowPropertiesSection()">
+                    <div class="border-b border-gray-200 pb-6">
+                        <div class="flex items-center space-x-3">
+                            <div [ngClass]="{
+                                    'bg-purple-100 text-purple-600': isManager(),
+                                    'bg-blue-100 text-blue-600': isAgent(),
+                                    'bg-indigo-100 text-indigo-600': isAdmin()
+                                }" class="p-2 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">
+                                Empreendimentos Vinculados
+                            </h2>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">
+                            {{ isManager() ? 'Empreendimentos sob responsabilidade deste gestor' :
+                            'Empreendimentos atendidos por este corretor' }}
+                        </p>
+                    </div>
+
+                    <!-- Lista de empreendimentos -->
+                    @if (linkedProperties.length > 0) {
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @for (property of linkedProperties; track property.id) {
+                        <div
+                            class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-medium text-gray-900">{{ property.name }}</h3>
+                                    <p class="text-sm text-gray-500 mt-1">{{ property.address }}</p>
+                                </div>
+                                <button *ngIf="canLinkProperties()" type="button" (click)="unlinkProperty(property.id)"
+                                    class="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50 transition-colors duration-150"
+                                    title="Desvincular empreendimento">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    } @else {
+                    <div
+                        class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-indigo-300 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        <h3 class="mt-3 text-sm font-medium text-gray-900">Nenhum empreendimento vinculado</h3>
+                        <p class="mt-1 text-sm text-gray-500">Adicione empreendimentos para este {{ editingUserRole ===
+                            'GESTOR' ? 'gestor' : 'corretor' }}</p>
+                    </div>
+                    }
+
+                    <!-- Opção para adicionar empreendimentos (só para admin) -->
+                    <div *ngIf="canLinkProperties()" class="mt-4">
+                        <button type="button" (click)="openPropertyLinkModal()"
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="-ml-1 mr-2 h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Vincular Empreendimento
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Gestor vinculado -->
+                <div *ngIf="form.get('managerId')?.value"
+                    class="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                    <ul class="divide-y divide-gray-200">
+                        <li class="py-4 px-6 hover:bg-gray-50 transition-colors duration-150">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 min-w-0">
+                                    <div class="flex-shrink-0">
+                                        <div
+                                            class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-600 font-medium shadow-inner">
+                                            {{ getManagerName(form.get('managerId')?.value) }}
+                                        </div>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            {{ getManagerName(form.get('managerId')?.value) }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 truncate">
+                                            {{ getManagerEmail() }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <button *ngIf="canChangeManager()" type="button"
+                                    (click)="form.get('managerId')?.setValue(null)"
+                                    class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors duration-150"
+                                    title="Remover gestor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Seção de Corretores Vinculados (apenas para gestores) -->
+                <div class="space-y-6" *ngIf="editingUserRole === 'GESTOR'">
+                    <div class="border-b border-gray-200 pb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 rounded-lg bg-green-100 text-green-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">
+                                Corretores Vinculados
+                            </h2>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">Corretores atualmente gerenciados por este gestor</p>
+                    </div>
+
+                    @if (linkedAgents.length > 0) {
+                    <div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                        <ul class="divide-y divide-gray-200">
+                            @for (agent of linkedAgents; track agent.id) {
+                            <li class="py-4 px-6 hover:bg-gray-50 transition-colors duration-150">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4 min-w-0">
+                                        <div class="flex-shrink-0">
+                                            <div
+                                                class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-600 font-medium shadow-inner">
+                                                {{ agent.name.charAt(0) }}
+                                            </div>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-sm font-medium text-gray-900 truncate">{{ agent.name }}</p>
+                                            <p class="text-sm text-gray-500 truncate">{{ agent.email }}</p>
+                                        </div>
+                                    </div>
+                                    <button *ngIf="canLinkAgents()" type="button" (click)="unlinkAgent(agent.id)"
+                                        class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 opacity-0 group-hover:opacity-100"
+                                        title="Desvincular corretor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                    } @else {
+                    <div
+                        class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-green-300 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <h3 class="mt-3 text-sm font-medium text-gray-900">Nenhum corretor vinculado</h3>
+                        <p class="mt-1 text-sm text-gray-500">Adicione corretores para este gestor</p>
+                    </div>
+                    }
+
+                    <!-- Seção de Corretores Disponíveis (só para admin editando gestor) -->
+                    <div *ngIf="canLinkAgents()" class="space-y-4">
+                        <div class="border-b border-gray-200 pb-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 rounded-lg bg-blue-100 text-blue-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h2 class="text-xl font-semibold text-gray-800">
+                                    Corretores Disponíveis
+                                </h2>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">Selecione corretores para vincular a este gestor</p>
+                        </div>
+
+                        <div class="relative max-w-md transition-all duration-300 focus-within:max-w-lg">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input type="text" formControlName="searchTerm" (input)="filterAgents()"
+                                class="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                                placeholder="Buscar corretores por nome ou e-mail...">
+                        </div>
+
+                        @if (filteredAvailableAgents.length > 0) {
+                        <div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                            <ul class="divide-y divide-gray-200">
+                                @for (agent of filteredAvailableAgents; track agent.id) {
+                                <li class="py-4 px-6 hover:bg-gray-50 transition-colors duration-150">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4 min-w-0">
+                                            <div class="flex-shrink-0">
+                                                <div
+                                                    class="h-10 w-10 rounded-full bg-gradient-to-r from-green-100 to-teal-100 flex items-center justify-center text-green-600 font-medium shadow-inner">
+                                                    {{ agent.name.charAt(0) }}
+                                                </div>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="text-sm font-medium text-gray-900 truncate">{{ agent.name }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 truncate">{{ agent.email }}</p>
+                                            </div>
+                                        </div>
+                                        <button type="button" (click)="linkAgent(agent.id)"
+                                            class="text-green-600 hover:text-green-800 p-2 rounded-full hover:bg-green-50 transition-colors duration-150"
+                                            title="Vincular corretor">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                        } @else if (form.get('searchTerm')?.value) {
+                        <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h3 class="mt-3 text-sm font-medium text-gray-900">Nenhum corretor encontrado</h3>
+                            <p class="mt-1 text-sm text-gray-500">Todos os corretores já estão vinculados ou não
+                                correspondem à pesquisa</p>
+                            <div class="mt-4">
+                                <button type="button" (click)="searchTerm = ''; filterAgents()"
+                                    class="text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none transition-colors duration-200">
+                                    Limpar busca
+                                </button>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Seção de Gestores Vinculados (apenas para corretores quando editado por admin) -->
+                <div class="space-y-6" *ngIf="shouldShowManagersSection()">
+                    <div class="border-b border-gray-200 pb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 rounded-lg bg-indigo-100 text-indigo-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">
+                                Gestores Vinculados
+                            </h2>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">Gestores responsáveis por este corretor</p>
+                    </div>
+
+                    @if (form.get('managerId')?.value) {
+                    <div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                        <ul class="divide-y divide-gray-200">
+                            <li class="py-4 px-6 hover:bg-gray-50 transition-colors duration-150 group">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4 min-w-0">
+                                        <div class="flex-shrink-0">
+                                            <div
+                                                class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-600 font-medium shadow-inner">
+                                                {{ getManagerName(form.get('managerId')?.value) }}
+                                            </div>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-sm font-medium text-gray-900 truncate">{{
+                                                getManagerName(form.get('managerId')?.value) }}</p>
+                                            <p class="text-sm text-gray-500 truncate">{{ getManagerEmail() }}</p>
+                                        </div>
+                                    </div>
+                                    <button *ngIf="canLinkManagers()" type="button"
+                                        (click)="form.get('managerId')?.setValue(null)"
+                                        class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 opacity-0 group-hover:opacity-100"
+                                        title="Desvincular gestor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    } @else {
+                    <div
+                        class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-indigo-300 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <h3 class="mt-3 text-sm font-medium text-gray-900">Nenhum gestor vinculado</h3>
+                        <p class="mt-1 text-sm text-gray-500">Adicione um gestor para este corretor</p>
+                    </div>
+                    }
+
+                    <!-- Seção de Gestores Disponíveis (só para admin editando corretor) -->
+                    <div *ngIf="canLinkManagers() && !form.get('managerId')?.value" class="space-y-4">
+                        <div class="border-b border-gray-200 pb-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 rounded-lg bg-blue-100 text-blue-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h2 class="text-xl font-semibold text-gray-800">
+                                    Gestores Disponíveis
+                                </h2>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">Selecione um gestor para vincular a este corretor</p>
+                        </div>
+
+                        <div class="relative max-w-md transition-all duration-300 focus-within:max-w-lg">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input type="text" [(ngModel)]="managerSearchTerm" (input)="filterManagers()"
+                                [ngModelOptions]="{standalone: true}"
+                                class="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                                placeholder="Buscar gestores por nome ou e-mail...">
+                        </div>
+
+                        @if (filteredAvailableManagers.length > 0) {
+                        <div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                            <ul class="divide-y divide-gray-200">
+                                @for (manager of filteredAvailableManagers; track manager.id) {
+                                <li class="py-4 px-6 hover:bg-gray-50 transition-colors duration-150">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4 min-w-0">
+                                            <div class="flex-shrink-0">
+                                                <div
+                                                    class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-600 font-medium shadow-inner">
+                                                    {{ manager.name.charAt(0) }}
+                                                </div>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="text-sm font-medium text-gray-900 truncate">{{ manager.name }}
+                                                </p>
+                                                <p class="text-sm text-gray-500 truncate">{{ manager.email }}</p>
+                                            </div>
+                                        </div>
+                                        <button type="button" (click)="form.get('managerId')?.setValue(manager.id)"
+                                            class="text-indigo-600 hover:text-indigo-800 p-2 rounded-full hover:bg-indigo-50 transition-colors duration-150"
+                                            title="Vincular gestor">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                        } @else if (managerSearchTerm) {
+                        <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h3 class="mt-3 text-sm font-medium text-gray-900">Nenhum gestor encontrado</h3>
+                            <p class="mt-1 text-sm text-gray-500">Todos os gestores já estão vinculados ou não
+                                correspondem à pesquisa</p>
+                            <div class="mt-4">
+                                <button type="button" (click)="managerSearchTerm = ''; filterManagers()"
+                                    class="text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none transition-colors duration-200">
+                                    Limpar busca
+                                </button>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Ações - Só mostra botões para admin -->
+                <div *ngIf="canEdit()"
+                    class="flex flex-col sm:flex-row justify-end gap-4 pt-8 border-t border-gray-200">
+                    <button type="button" (click)="cancel()"
+                        class="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancelar
+                    </button>
+                    <button type="submit" [disabled]="form.invalid || loading" [ngClass]="{
+                            'from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700': editingUserRole === 'GESTOR',
+                            'from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700': editingUserRole === 'CORRETOR',
+                            'from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700': editingUserRole === 'ADMINISTRADOR'
+                        }"
+                        class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed">
+                        <svg *ngIf="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        {{ loading ? 'Salvando...' : 'Salvar ' + (editingUserRole === 'GESTOR' ? 'Gestor' : 'Corretor')
+                        }}
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
+
+    <!-- No final do template, antes do fechamento do div principal -->
+    <div *ngIf="showPropertyModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div
+            class="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[80vh] overflow-y-auto transform transition-all duration-300 scale-95 hover:scale-100">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Vincular Empreendimento</h3>
+                    <button (click)="showPropertyModal = false"
+                        class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <div *ngFor="let property of availableProperties"
+                        class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200 group"
+                        (click)="selectProperty(property)">
+                        <h4 class="font-medium text-gray-900 group-hover:text-indigo-600">{{ property.name }}</h4>
+                        <p class="text-sm text-gray-500">{{ property.address }}</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5 text-gray-400 group-hover:text-indigo-500 transition-colors duration-200"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                    <div *ngIf="availableProperties.length === 0" class="text-center py-8 text-gray-500">
+                        Nenhum empreendimento disponível para vincular
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -12,13 +12,19 @@ import { PropertyService } from '../../services/property.service';
     templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
-    userCount = 0;
-    adminCount = 0;
-    managerCount = 0;
-    brokerCount = 0;
-    propertyCount = 0;
+    userCount = 10;
+    adminCount = 1;
+    managerCount = 10;
+    brokerCount = 30;
+    propertyCount = 60;
     clientCount = 125; // Exemplo
     salesCount = 42; // Exemplo
+    activeProperties: number = 10;
+    inactiveProperties : number = 10;
+    potentialClients : number = 100;
+    revenue : number = 100000;
+    activeClients: number = 25;
+    monthSales: number = 20;
     loading = true;
 
     // Dados de exemplo para atividades

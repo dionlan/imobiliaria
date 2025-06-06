@@ -36,6 +36,8 @@ export class PropertyViewComponent implements OnInit {
   availableAgents: User[] = [];
   showAddManagerDialog = false;
   showAddAgentDialog = false;
+  availableUnits: number = 15; // Substitua pelo valor real
+  totalUnits: number = 50;    // Substitua pelo valor real
 
   constructor(
     private route: ActivatedRoute,
@@ -79,19 +81,14 @@ export class PropertyViewComponent implements OnInit {
     }
 
     this.loading = true;
-    this.propertyService.getPropertyById(+propertyId).pipe(
-      switchMap(property => {
-        return this.userService.getUsers().pipe(
-          map(users => this.propertyService.enrichPropertyWithUsers(property, users))
-        );
-      }),
+    this.propertyService.getPropertyByIdNovo(+propertyId).pipe(
       finalize(() => this.loading = false)
     ).subscribe({
-      next: (property) => {
-        this.property = property;
-        this.loadAvailableManagers();
-      },
-      error: (err) => {
+        next: (property) => {
+          this.property = property;
+          console.log('EMPREENDIMENTO: ', this.property);
+          this.loadAvailableManagers();
+      }, error: (err) => {
         this.error = 'Erro ao carregar dados do empreendimento';
         this.messageService.add({
           severity: 'error',
@@ -112,6 +109,7 @@ export class PropertyViewComponent implements OnInit {
         this.availableManagers = managers.filter(manager =>
           !this.property!.managers.some(m => m.managerId === manager.id)
         );
+        console.log('GESTORES DISPONÍVEIS: ', this.availableManagers)
       },
       error: () => {
         this.messageService.add({
@@ -146,23 +144,13 @@ export class PropertyViewComponent implements OnInit {
     });
   }
 
-  getStatusBadgeClass(status: PropertyStatus): string {
+  /* getStatusBadgeClass(status: PropertyStatus): string {
     switch (status) {
       case PropertyStatus.ACTIVE: return 'bg-green-100 text-green-800';
       case PropertyStatus.INACTIVE: return 'bg-red-100 text-red-800';
       case PropertyStatus.PENDING: return 'bg-yellow-100 text-yellow-800';
       case PropertyStatus.MAINTENANCE: return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
-    }
-  }
-
-  /* getStatusDisplayName(status: PropertyStatus): string {
-    switch (status) {
-      case PropertyStatus.ACTIVE: return 'Ativo';
-      case PropertyStatus.INACTIVE: return 'Inativo';
-      case PropertyStatus.PENDING: return 'Pendente';
-      case PropertyStatus.MAINTENANCE: return 'Em Manutenção';
-      default: return 'Desconhecido';
     }
   } */
 
@@ -363,9 +351,30 @@ export class PropertyViewComponent implements OnInit {
     }
   }
 
-  getStatusDisplayName(status: PropertyStatus | undefined): string {
-    if (!status) return 'Desconhecido';
+  getStatusDisplayName(status: string | undefined): string {
+    if (!status) return 'Indefinido';
 
+    switch (status) {
+      case 'ACTIVE': return 'Ativo';
+      case 'INACTIVE': return 'Inativo';
+      case 'PENDING': return 'Pendente';
+      case 'MAINTENANCE': return 'Em Manutenção';
+      default: return 'Desconhecido';
+    }
+  }
+
+    getStatusBadgeClass(status: string): string {
+    if (!status) return 'Indefinido'; // Adicione esta verificação
+    switch (status) {
+      case 'ACTIVE': return 'bg-green-100 text-green-800';
+      case 'INACTIVE': return 'bg-red-100 text-red-800';
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+      case 'MAINTENANCE': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  /* getStatusDisplayName(status: PropertyStatus): string {
     switch (status) {
       case PropertyStatus.ACTIVE: return 'Ativo';
       case PropertyStatus.INACTIVE: return 'Inativo';
@@ -373,7 +382,7 @@ export class PropertyViewComponent implements OnInit {
       case PropertyStatus.MAINTENANCE: return 'Em Manutenção';
       default: return 'Desconhecido';
     }
-  }
+  } */
 
   trackByManagerId(index: number, manager: PropertyManager): number {
     return manager.managerId;

@@ -17,7 +17,6 @@ import { AdvancedFilterComponent } from '../../../components/shared/advanced-fil
   imports: [
     CommonModule,
     RouterLink,
-    AsyncPipe,
     TruncatePipe,
     AdvancedFilterComponent
   ],
@@ -27,7 +26,6 @@ import { AdvancedFilterComponent } from '../../../components/shared/advanced-fil
 
 export class PropertyListComponent implements OnInit {
   properties: Property[] = [];
-  result: any[] = [];
   filteredProperties: Property[] = [];
   loading = true;
   sortField = 'name';
@@ -37,9 +35,18 @@ export class PropertyListComponent implements OnInit {
   constructor(
     private propertyService: PropertyService,
     public authService: AuthService,
-    private userService: UserService,
     private router: Router
   ) { }
+
+  // Variáveis de paginação
+  pagination = {
+    page: 0,               // Página atual (0-based index)
+    pageSize: 10,          // Itens por página
+    totalRecords: 0,       // Total de registros
+    totalPages: 0          // Total de páginas
+  };
+
+  pages: number[] = [];    // Array de números de páginas para exibir
 
   ngOnInit(): void {
     this.loadProperties();
@@ -49,12 +56,15 @@ export class PropertyListComponent implements OnInit {
     this.loading = true;
     this.propertyService.getPropertiesNovo().subscribe({
       next: (properties) => {
-        this.result = properties;
-        console.log('EMPREENDIMENTOS: ', this.result);
+        console.log('EMPREENDIMENTOS: ', properties);
         this.properties = this.filterPropertiesByRole(properties);
         this.filteredProperties = [...this.properties];
         this.loading = false;
+        this.filteredProperties = [...properties];
+        this.pagination.totalRecords = properties.length;
+        this.pagination.totalPages = Math.ceil(this.pagination.totalRecords / this.pagination.pageSize);
         this.initializeManagerNamesMap();
+        this.updatePages();
       },
       error: () => {
         this.loading = false;
@@ -76,24 +86,17 @@ export class PropertyListComponent implements OnInit {
   }
 
   private initializeManagerNamesMap(): void {
-    const uniqueManagerIds = [
-      ...new Set(
-        this.properties
-          .flatMap(p => p.managers)
-          .map(m => m.managerId)
-      )
-    ];
-    console.log('Gestores únicos encontrados:', uniqueManagerIds);
+    // Cria um mapa com os IDs e nomes dos gestores já disponíveis
+    const managersFromResponse = this.properties
+      .flatMap(p => p.managers)
+      .map(m => ({ id: m.managerId, name: m.manager ? m.manager.name : 'Gestor não especificado' }));
 
-    uniqueManagerIds.forEach(id => {
-      this.managerNamesMap.set(id, this.userService.getUserNameById(id).pipe(
-        catchError(() => {
-          console.error('Erro ao carregar gestor com ID:', id);
-          return of('Gestor não encontrado');
-        }),
-        startWith('Carregando...')
-      ));
+    // Preenche o managerNamesMap com os dados já disponíveis
+    managersFromResponse.forEach(manager => {
+      this.managerNamesMap.set(manager.id, of(manager.name));
     });
+
+    console.log('Mapa de gestores inicializado:', this.managerNamesMap);
   }
 
   applyFilter(filter: any): void {
@@ -112,6 +115,12 @@ export class PropertyListComponent implements OnInit {
 
       return matchesSearch && matchesStatus;
     });
+
+    this.pagination.page = 0; // Reset para primeira página
+    this.pagination.totalRecords = this.filteredProperties.length;
+    this.pagination.totalPages = Math.ceil(this.pagination.totalRecords / this.pagination.pageSize);
+    this.updatePages();
+    this.applyPagination();
   }
 
   sort(field: string): void {
@@ -168,4 +177,44 @@ export class PropertyListComponent implements OnInit {
   navigateToCreate(): void {
     this.router.navigate(['/properties/new']);
   }
+
+  // Método para obter nomes dos gestores adicionais
+  getAdditionalManagersNames(managers: any[]): string {
+    return managers.slice(2).map(m => m.manager!.name).join(', ');
+  }
+
+  // Método para mudar de página
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.pagination.totalPages) {
+      this.pagination.page = page - 1; // Convertemos para 0-based index
+      this.updatePages();
+      this.applyPagination();
+    }
+  }
+
+  // Aplica a paginação aos dados filtrados
+  private applyPagination(): void {
+    const startIndex = this.pagination.page * this.pagination.pageSize;
+    const endIndex = startIndex + this.pagination.pageSize;
+    this.filteredProperties = this.properties.slice(startIndex, endIndex);
+  }
+
+  // Atualiza o array de páginas visíveis
+  private updatePages(): void {
+    const maxVisiblePages = 5; // Número máximo de páginas visíveis
+    this.pages = [];
+
+    let startPage = Math.max(1, this.pagination.page + 1 - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.pagination.totalPages, startPage + maxVisiblePages - 1);
+
+    // Ajusta se estiver no final
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      this.pages.push(i);
+    }
+  }
+
 }

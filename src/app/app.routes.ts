@@ -17,7 +17,7 @@ export const routes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./views/dashboard/dashboard.component').then(m => m.DashboardComponent) },
       {
         path: 'users',
-        canMatch: [() => inject(AuthService).isAdmin()],
+        canMatch: [() => inject(AuthService).isAdmin() || inject(AuthService).isManager()],
         children: [
           { path: '', loadComponent: () => import('./views/users/user-list/user-list.component').then(m => m.UserListComponent) },
           { path: 'new', loadComponent: () => import('./views/users/user-form/user-form.component').then(m => m.UserFormComponent) },
@@ -27,12 +27,21 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'campaigns',
+        canMatch: [() => inject(AuthService).isAdmin()],
+        children: [
+          { path: '', loadComponent: () => import('./views/campaign/campaign-list/campaign-list.component').then(m => m.CampaignListComponent) },
+          /* { path: 'new', loadComponent: () => import('./views/campaign/campaign-form/campaign-form.component').then(m => m.CampaignFormComponent) },
+          { path: ':id', loadComponent: () => import('./views/campaign/campaign-view/campaing-view.component').then(m => m.CampaignViewComponent) } */
+        ]
+      },
+      {
         path: 'properties',
         children: [
           { path: '', loadComponent: () => import('./views/properties/property-list/property-list.component').then(m => m.PropertyListComponent) },
           {
             path: 'new',
-            canMatch: [() => inject(AuthService).isAdmin()],
+            canMatch: [() => inject(AuthService).isAdmin() || inject(AuthService).isManager],
             loadComponent: () => import('./views/properties/property-form/property-form.component').then(m => m.PropertyFormComponent)
           },
           { path: ':id', loadComponent: () => import('./views/properties/property-view/property-view.component').then(m => m.PropertyViewComponent) },

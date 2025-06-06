@@ -1,77 +1,168 @@
-<div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 md:p-8">
+<!-- TESTAR NOVO DESIGN -->
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
     <!-- Loading Overlay -->
     @if (loading) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center space-y-4">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center space-y-4 animate-scale-in">
             <div class="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
             <p class="text-gray-700 font-medium">Carregando empreendimento...</p>
+            <p class="text-sm text-gray-500">Por favor, aguarde</p>
         </div>
     </div>
     }
 
     <!-- Main Container -->
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto space-y-8">
         <!-- Property Header -->
-        <div class="flex flex-col md:flex-row gap-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden animate-fade-in">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <h1 class="text-2xl font-bold text-white">Detalhes do Empreendimento</h1>
+                    <div class="flex space-x-2">
+                        <button *ngIf="canEditProperty" (click)="editProperty()"
+                            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path
+                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                            <span>Editar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Property Content -->
+        <div class="flex flex-col md:flex-row gap-6 animate-fade-in-up">
             <!-- Property Image -->
-            <div class="md:w-1/2 lg:w-2/5 h-80 rounded-2xl overflow-hidden shadow-xl bg-white">
+            <div class="md:w-1/2 lg:w-2/5 h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl bg-white relative group">
                 <img [src]="property?.imageUrl || '/assets/images/property-default.jpg'" alt="Imagem do empreendimento"
-                    class="w-full h-full object-cover">
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                <div *ngIf="property?.status" class="absolute top-4 right-4">
+                    <span
+                        class="px-3 py-1 rounded-full text-sm font-medium shadow-md backdrop-blur-sm bg-white/80 {{ getStatusBadgeClass(property!.status) }}">
+                        {{ getStatusDisplayName(property!.status) }}
+                    </span>
+                </div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <p class="text-white text-sm font-medium">Clique para ampliar</p>
+                </div>
             </div>
 
             <!-- Property Info -->
-            <div class="md:w-1/2 lg:w-3/5 bg-white rounded-2xl shadow-sm p-6">
-                <div class="flex flex-col h-full">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">{{ property?.name }}</h1>
-                            <p class="text-gray-600 mt-1">{{ property?.address }}</p>
-                        </div>
-                        <span
-                            class="px-3 py-1 rounded-full text-sm font-medium {{ getStatusBadgeClass(property!.status) }}">
-                            {{ getStatusDisplayName(property!.status) }}
-                        </span>
-                    </div>
-
-                    <p class="text-gray-600 flex-grow">{{ property?.description || 'Nenhuma descrição fornecida' }}</p>
-
-                    <div class="grid grid-cols-2 gap-4 mt-6">
-                        <div class="bg-indigo-50 p-4 rounded-lg">
-                            <p class="text-xs text-indigo-600 font-medium">Gestores</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ property?.managers?.length || 0 }}</p>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded-lg">
-                            <p class="text-xs text-green-600 font-medium">Corretores</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ totalAgents }}</p>
+            <div class="md:w-1/2 lg:w-3/5 bg-white rounded-2xl shadow-xl p-6 flex flex-col">
+                <div class="flex-grow">
+                    <div class="mb-6">
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{{ property?.name }}</h1>
+                        <div class="flex items-center text-gray-600 space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p class="text-gray-600">{{ property?.address }}</p>
                         </div>
                     </div>
 
-                    @if (canEditProperty) {
-                    <button (click)="editProperty()"
-                        class="mt-6 w-full md:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path
-                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                        </svg>
-                        Editar Empreendimento
-                    </button>
-                    }
+                    <div class="prose max-w-none text-gray-600 mb-6">
+                        <p class="text-gray-700 leading-relaxed">{{ property?.description || 'Nenhuma descrição
+                            fornecida' }}</p>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                    <!-- Managers Card -->
+                    <div
+                        class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-all duration-300 group">
+                        <div class="flex flex-col items-center text-center">
+                            <div
+                                class="p-3 rounded-full bg-indigo-50 text-indigo-600 mb-2 group-hover:bg-indigo-100 transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">GESTORES</h3>
+                            <p class="text-2xl font-bold text-gray-800">{{ property?.managers?.length || 0 }}</p>
+                            <p class="text-xs text-gray-400 mt-1">Responsáveis</p>
+                        </div>
+                    </div>
+
+                    <!-- Agents Card -->
+                    <div
+                        class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-all duration-300 group">
+                        <div class="flex flex-col items-center text-center">
+                            <div
+                                class="p-3 rounded-full bg-green-50 text-green-600 mb-2 group-hover:bg-green-100 transition-colors duration-200">
+                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01" />
+                                </svg>
+                            </div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">CORRETORES</h3>
+                            <p class="text-2xl font-bold text-gray-800">{{ totalAgents }}</p>
+                            <p class="text-xs text-gray-400 mt-1">Atendendo</p>
+                        </div>
+                    </div>
+
+                    <!-- Units Card -->
+                    <div
+                        class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-all duration-300 group">
+                        <div class="flex flex-col items-center text-center">
+                            <div
+                                class="p-3 rounded-full bg-blue-50 text-blue-600 mb-2 group-hover:bg-blue-100 transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                            </div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">UNIDADES</h3>
+                            <p class="text-2xl font-bold text-gray-800">{{ availableUnits || 0 }}</p>
+                            <div class="w-full mt-2">
+                                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-600 transition-all duration-500"
+                                        [style.width]="((availableUnits / totalUnits) * 100).toFixed(0) + '%' || '0%'">
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">{{ ((availableUnits / totalUnits) *
+                                    100).toFixed(0) || 0 }}% disponível</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Team Management Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up delay-200">
             <!-- Managers and Agents -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Managers Section -->
-                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div
+                    class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg">
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-xl font-semibold text-gray-900">Gestores Responsáveis</h2>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <h2 class="text-xl font-semibold text-gray-900">Gestores Responsáveis</h2>
+                            </div>
                             @if (canEditProperty) {
                             <button (click)="showAddManagerDialog = true"
-                                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-2">
+                                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
@@ -91,13 +182,12 @@
                                 $index) {
                                 <button (click)="selectedManagerIndex = i"
                                     [class]="selectedManagerIndex === i 
-                                        ? 'border-indigo-500 text-indigo-600 border-b-2 font-medium'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 font-medium'"
+                                ? 'border-indigo-500 text-indigo-600 border-b-2 font-medium'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 font-medium'"
                                     class="whitespace-nowrap py-3 px-1 text-sm transition-colors duration-150 flex items-center">
-
                                     <span class="flex items-center">
+                                        <span class="inline-block h-2 w-2 rounded-full bg-indigo-500 mr-2"></span>
                                         {{ manager.manager!.name }}
-
                                         @if (canEditProperty && property!.managers.length > 1) {
                                         <button
                                             (click)="confirmRemoveManager(manager.managerId); $event.stopPropagation()"
@@ -116,7 +206,7 @@
                             </nav>
                         </div>
                         } @else {
-                        <div class="text-center py-8 bg-gray-50 rounded-lg">
+                        <div class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
                             <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
@@ -124,18 +214,35 @@
                             </svg>
                             <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhum gestor vinculado</h3>
                             <p class="mt-1 text-sm text-gray-500">Adicione gestores para este empreendimento.</p>
+                            @if (canEditProperty) {
+                            <button (click)="showAddManagerDialog = true"
+                                class="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                                Adicionar Gestor
+                            </button>
+                            }
                         </div>
                         }
 
                         <!-- Agents List -->
                         @if (selectedManager) {
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-medium text-gray-900">Corretores de {{
-                                    selectedManager.manager!.name }}</h3>
+                        <div class="mt-6">
+                            <div
+                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-medium text-gray-900">Corretores de {{
+                                        selectedManager.manager!.name }}</h3>
+                                </div>
                                 @if (canManageTeam) {
                                 <button (click)="loadAvailableAgents()"
-                                    class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1.5">
+                                    class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-sm hover:shadow-md">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -151,11 +258,11 @@
                             <ul class="divide-y divide-gray-200">
                                 @for (agent of selectedManager.agents; track trackByAgentId($index, agent)) {
                                 <li
-                                    class="py-4 flex items-center justify-between group hover:bg-gray-50 rounded-lg px-2 transition-colors duration-150">
+                                    class="py-4 flex items-center justify-between group hover:bg-gray-50 rounded-lg px-3 transition-colors duration-150">
                                     <div class="flex items-center space-x-4">
                                         <div class="flex-shrink-0">
                                             <div
-                                                class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium">
+                                                class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-600 font-medium">
                                                 {{ agent.agent?.name?.charAt(0) }}
                                             </div>
                                         </div>
@@ -179,7 +286,7 @@
                                 }
                             </ul>
                             } @else {
-                            <div class="text-center py-8 bg-gray-50 rounded-lg">
+                            <div class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
@@ -187,6 +294,12 @@
                                 </svg>
                                 <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhum corretor vinculado</h3>
                                 <p class="mt-1 text-sm text-gray-500">Adicione corretores para este gestor.</p>
+                                @if (canManageTeam) {
+                                <button (click)="loadAvailableAgents()"
+                                    class="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                                    Adicionar Corretor
+                                </button>
+                                }
                             </div>
                             }
                         </div>
@@ -197,36 +310,28 @@
 
             <!-- Details and Available Agents -->
             <div class="space-y-6">
-                <!-- Property Details - Premium Version -->
+                <!-- Property Details Card -->
                 <div
-                    class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-xl">
+                    class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg">
                     <div class="p-6">
-                        <!-- Header with decorative element -->
                         <div class="flex items-start justify-between mb-6 pb-4 border-b border-gray-100">
-                            <div>
-                                <h2 class="text-2xl font-semibold text-gray-900 flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500 mr-2"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                     </svg>
-                                    Detalhes do Empreendimento
-                                </h2>
-                                <p class="text-sm text-gray-500 mt-1">Informações gerais e status atual</p>
+                                </div>
+                                <h2 class="text-xl font-semibold text-gray-900">Detalhes do Empreendimento</h2>
                             </div>
-                            <!-- Atualize a seção do badge de status para: -->
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ property?.status ? 
-                                getStatusBadgeClass(property!.status) : 'bg-gray-100 text-gray-800' }}">
-                                {{ property?.status ? getStatusDisplayName(property!.status) : 'Desconhecido' }}
-                            </span>
                         </div>
 
-                        <!-- Detail Items with enhanced visual hierarchy -->
                         <div class="space-y-5">
                             <!-- Status Item -->
-                            <div class="flex items-start">
+                            <div class="flex items-start group">
                                 <div
-                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 mr-4">
+                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 mr-4 group-hover:bg-indigo-100 transition-colors duration-200">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -237,15 +342,14 @@
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Status</p>
                                     <p class="text-lg font-semibold text-gray-900 mt-1">{{
-                                        getStatusDisplayName(property!.status) }}</p>
-                                    <p class="text-sm text-gray-500 mt-1">Situação atual do empreendimento</p>
+                                        getStatusDisplayName(property?.status) }}</p>
                                 </div>
                             </div>
 
                             <!-- Creation Date Item -->
-                            <div class="flex items-start pt-4 border-t border-gray-100">
+                            <div class="flex items-start pt-4 border-t border-gray-100 group">
                                 <div
-                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 mr-4">
+                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 mr-4 group-hover:bg-indigo-100 transition-colors duration-200">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -255,7 +359,8 @@
                                 </div>
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Data de
-                                        Criação</p>
+                                        Criação
+                                    </p>
                                     <p class="text-lg font-semibold text-gray-900 mt-1">{{ property?.createdAt |
                                         date:'dd/MM/yyyy' }}</p>
                                     <p class="text-sm text-gray-500 mt-1">Quando foi cadastrado no sistema</p>
@@ -263,9 +368,9 @@
                             </div>
 
                             <!-- Last Update Item -->
-                            <div class="flex items-start pt-4 border-t border-gray-100">
+                            <div class="flex items-start pt-4 border-t border-gray-100 group">
                                 <div
-                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 mr-4">
+                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 mr-4 group-hover:bg-indigo-100 transition-colors duration-200">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -275,35 +380,11 @@
                                 </div>
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Última
-                                        Atualização</p>
+                                        Atualização
+                                    </p>
                                     <p class="text-lg font-semibold text-gray-900 mt-1">{{ property?.updatedAt |
                                         date:'dd/MM/yyyy' }}</p>
                                     <p class="text-sm text-gray-500 mt-1">Quando foi modificado pela última vez</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Visual timeline indicator -->
-                        <div class="mt-6 pt-6 border-t border-gray-100">
-                            <div class="relative">
-                                <!-- Timeline line -->
-                                <div class="absolute left-5 top-0 h-full w-0.5 bg-indigo-100" aria-hidden="true"></div>
-
-                                <div class="relative flex items-start">
-                                    <div
-                                        class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-white ring-8 ring-indigo-50 mr-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <div class="min-w-0 flex-1">
-                                        <p class="text-sm text-gray-500">Histórico completo disponível no <a href="#"
-                                                class="font-medium text-indigo-600 hover:text-indigo-500">relatório
-                                                detalhado</a></p>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -312,12 +393,21 @@
 
                 <!-- Available Managers Dialog -->
                 @if (showAddManagerDialog) {
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 animate-scale-in">
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl font-semibold text-gray-900">Gestores Disponíveis</h2>
+                            <h2 class="text-xl font-semibold text-gray-900 flex items-center space-x-2">
+                                <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </div>
+                                <span>Gestores Disponíveis</span>
+                            </h2>
                             <button (click)="showAddManagerDialog = false"
-                                class="text-gray-400 hover:text-gray-500 transition-colors duration-150">
+                                class="text-gray-400 hover:text-gray-500 transition-colors duration-150 p-1 rounded-full hover:bg-gray-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -329,11 +419,12 @@
                         @if (availableManagers.length > 0) {
                         <ul class="divide-y divide-gray-200">
                             @for (manager of availableManagers; track trackByUserId($index, manager)) {
-                            <li class="py-3 flex items-center justify-between">
+                            <li
+                                class="py-3 flex items-center justify-between hover:bg-gray-50 px-2 rounded transition-colors duration-150 group">
                                 <div class="flex items-center space-x-4">
                                     <div class="flex-shrink-0">
                                         <div
-                                            class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium">
+                                            class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-600 font-medium">
                                             {{ manager.name.charAt(0) }}
                                         </div>
                                     </div>
@@ -372,12 +463,22 @@
 
                 <!-- Available Agents Dialog -->
                 @if (showAddAgentDialog) {
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 animate-scale-in">
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl font-semibold text-gray-900">Corretores Disponíveis</h2>
+                            <h2 class="text-xl font-semibold text-gray-900 flex items-center space-x-2">
+                                <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01" />
+                                    </svg>
+                                </div>
+                                <span>Corretores Disponíveis</span>
+                            </h2>
                             <button (click)="showAddAgentDialog = false"
-                                class="text-gray-400 hover:text-gray-500 transition-colors duration-150">
+                                class="text-gray-400 hover:text-gray-500 transition-colors duration-150 p-1 rounded-full hover:bg-gray-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -395,11 +496,12 @@
                         } @else if (availableAgents.length > 0) {
                         <ul class="divide-y divide-gray-200">
                             @for (agent of availableAgents; track trackByUserId($index, agent)) {
-                            <li class="py-3 flex items-center justify-between">
+                            <li
+                                class="py-3 flex items-center justify-between hover:bg-gray-50 px-2 rounded transition-colors duration-150 group">
                                 <div class="flex items-center space-x-4">
                                     <div class="flex-shrink-0">
                                         <div
-                                            class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium">
+                                            class="h-10 w-10 rounded-full bg-gradient-to-r from-green-100 to-teal-100 flex items-center justify-center text-green-600 font-medium">
                                             {{ agent.name.charAt(0) }}
                                         </div>
                                     </div>
@@ -409,7 +511,7 @@
                                     </div>
                                 </div>
                                 <button (click)="addAgentToManager(agent.id)"
-                                    class="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 p-1 rounded-full hover:bg-indigo-50">
+                                    class="text-green-600 hover:text-green-800 transition-colors duration-150 p-1 rounded-full hover:bg-green-50">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -438,8 +540,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Toast Container -->
-    <p-toast [baseZIndex]="5000"></p-toast>
-    <p-confirmDialog [baseZIndex]="5000"></p-confirmDialog>
 </div>

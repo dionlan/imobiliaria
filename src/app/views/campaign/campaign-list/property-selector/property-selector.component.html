@@ -1,0 +1,60 @@
+<div class="relative w-full">
+    <!-- Select Trigger -->
+    <button type="button" (click)="toggleDropdown()" [disabled]="disabled || isLoading"
+        class="w-full flex items-center justify-between gap-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
+        [class.opacity-50]="disabled || isLoading" [class.cursor-not-allowed]="disabled || isLoading"
+        [class.border-indigo-300]="isDropdownOpen">
+        <span class="truncate">
+            {{ selectedPropertyName }}
+        </span>
+
+        @if (isLoading) {
+        <svg class="animate-spin h-4 w-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+        </svg>
+        } @else {
+        <svg class="h-4 w-4 text-gray-400 transition-transform duration-200" [class.rotate-180]="isDropdownOpen"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+        }
+    </button>
+
+    <!-- Dropdown -->
+    @if (isDropdownOpen) {
+    <div
+        class="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <ul class="max-h-60 overflow-auto py-1 text-sm">
+            @if (properties.length === 0) {
+            <li class="px-4 py-2 text-gray-500">
+                @if (isLoading) {
+                Carregando empreendimentos...
+                } @else {
+                Nenhum empreendimento disponível
+                }
+            </li>
+            } @else {
+            @for (property of properties; track property.id) {
+            <li>
+                <button type="button" (click)="selectProperty(property)"
+                    class="w-full text-left px-4 py-2 hover:bg-indigo-50 text-gray-700 flex items-center"
+                    [class.bg-indigo-100]="selectedPropertyId === property.id">
+                    <span class="truncate">{{ property.name }}</span>
+                    @if (selectedPropertyId === property.id) {
+                    <svg class="ml-auto h-4 w-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    }
+                </button>
+            </li>
+            }
+            }
+        </ul>
+    </div>
+    }
+</div>

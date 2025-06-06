@@ -1,10 +1,10 @@
 import { User } from "./user.model";
 
 export enum PropertyStatus {
-  ACTIVE = 'ATIVO',
-  INACTIVE = 'INATIVO',
-  PENDING = 'PENDENTE',
-  MAINTENANCE = 'EM_MANUTENCAO'
+  ACTIVE = 'ACTIVE',        // Alterado para corresponder ao backend
+  INACTIVE = 'INACTIVE',    // Alterado para corresponder ao backend
+  PENDING = 'PENDING',      // Alterado para corresponder ao backend
+  MAINTENANCE = 'MAINTENANCE' // Alterado para corresponder ao backend
 }
 
 export interface PropertyAgent {

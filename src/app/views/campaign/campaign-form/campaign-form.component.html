@@ -1,0 +1,84 @@
+<p-toast [breakpoints]="{'640px': {width: '90%', right: '0'}}"></p-toast>
+<div class="bg-white rounded-xl shadow-sm p-6">
+    <h1 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
+        <i class="pi pi-user-edit mr-2 text-indigo-600"></i>
+        <span>{{isEdit ? 'Editar Usuário' : 'Novo Usuário'}}</span>
+    </h1> 
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Nome Completo -->
+            <div class="space-y-2">
+                <label for="name" class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="pi pi-user text-gray-400"></i>
+                    </div>
+                    <input id="name" type="text" formControlName="name"
+                        class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        [class.border-red-500]="form.get('name')?.invalid && form.get('name')?.touched">
+                </div>
+                <small *ngIf="form.get('name')?.invalid && form.get('name')?.touched"
+                    class="text-red-600 text-xs block">
+                    Nome é obrigatório
+                </small>
+            </div>
+
+            <!-- E-mail -->
+            <div class="space-y-2">
+                <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="pi pi-envelope text-gray-400"></i>
+                    </div>
+                    <input id="email" type="email" formControlName="email"
+                        class="block w-full pl-10 pr-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        [class.border-red-500]="form.get('email')?.invalid && form.get('email')?.touched">
+                </div>
+                <small *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+                    class="text-red-600 text-xs block">
+                    Informe um e-mail válido
+                </small>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Perfil -->
+            <div class="space-y-2">
+                <label for="role" class="block text-sm font-medium text-gray-700">Perfil</label>
+                <select id="role" formControlName="role"
+                    class="block w-full px-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    [class.border-red-500]="form.get('role')?.invalid && form.get('role')?.touched">
+                    <option value="" disabled selected>Selecione um perfil</option>
+                    <option *ngFor="let role of roles" [value]="role.value">{{role.label}}</option>
+                </select>
+                <small *ngIf="form.get('role')?.invalid && form.get('role')?.touched"
+                    class="text-red-600 text-xs block">
+                    Selecione um perfil
+                </small>
+            </div>
+
+            <!-- Gestores Responsáveis (condicional) -->
+            <div class="space-y-2" *ngIf="form.get('role')?.value === 'CORRETOR'">
+                <label for="managers" class="block text-sm font-medium text-gray-700">Gestores Responsáveis</label>
+                <div class="relative">
+                    <select id="managers" formControlName="managers" multiple
+                        class="block w-full px-3 py-2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option *ngFor="let manager of managers" [value]="manager.id">{{manager.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+            <button type="button" (click)="navigateBack()"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-300">
+                Cancelar
+            </button>
+            <button type="submit" [disabled]="form.invalid"
+                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-300 disabled:opacity-50">
+                Salvar
+            </button>
+        </div>
+    </form>
+</div>

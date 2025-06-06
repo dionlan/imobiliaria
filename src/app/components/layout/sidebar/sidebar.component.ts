@@ -21,7 +21,7 @@ export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [];
   currentYear = new Date().getFullYear();
   isSidebarVisible = this.sidebarService.visible;
-  
+
   // Propriedades computadas para o template
   get userInitial(): string {
     return this.authService.getCurrentUser()?.name?.charAt(0) || 'U';
@@ -53,24 +53,29 @@ export class SidebarComponent implements OnInit {
         routerLink: ['/properties']
       },
       {
-        label: 'Clientes',
-        icon: PrimeIcons.USERS,
-        routerLink: ['/clients'],
-        badge: 'Novo'
+        label: 'Usuários',
+        icon: PrimeIcons.USER_EDIT,
+        routerLink: ['/users']
       }
     ];
 
     const adminItems: MenuItem[] = [
       {
-        label: 'Usuários',
-        icon: PrimeIcons.USER_EDIT,
-        routerLink: ['/users']
+        label: 'Campanhas',
+        icon: PrimeIcons.MEGAPHONE,
+        routerLink: ['/campaigns']
       },
       {
+        label: 'Clientes',
+        icon: PrimeIcons.USERS,
+        routerLink: ['/clients'],
+        badge: 'Novo'
+      }
+      /* {
         label: 'Relatórios',
         icon: PrimeIcons.CHART_BAR,
         routerLink: ['/reports']
-      }
+      } */
     ];
 
     const managerItems: MenuItem[] = [
@@ -87,11 +92,11 @@ export class SidebarComponent implements OnInit {
         icon: PrimeIcons.USER,
         routerLink: ['/profile']
       },
-      {
+      /* {
         label: 'Configurações',
         icon: PrimeIcons.COG,
         routerLink: ['/settings']
-      }
+      } */
     ];
 
     this.menuItems = [...baseItems];

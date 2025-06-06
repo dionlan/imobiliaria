@@ -1,0 +1,56 @@
+<p-toast [breakpoints]="{'640px': {width: '90%', right: '0'}}"></p-toast>
+<div class="grid">
+    <div class="col-12 md:col-8">
+        <p-card [header]="user.name" subheader="Detalhes do Usuário">
+            <div class="grid">
+                <div class="col-12 md:col-6">
+                    <p><strong>E-mail:</strong> {{user.email}}</p>
+                    <p><strong>Perfil:</strong>
+                        <p-tag [value]="user.role" [severity]="getRoleSeverity(user.role)"></p-tag>
+                    </p>
+                </div>
+                <div class="col-12 md:col-6">
+                    <p><strong>Data de Cadastro:</strong> {{user.createdAt | date:'dd/MM/yyyy'}}</p>
+                    <p><strong>Status:</strong>
+                        <p-tag [value]="user.isActive ? 'Ativo' : 'Inativo'"
+                            [severity]="user.isActive ? 'success' : 'danger'"></p-tag>
+                    </p>
+                </div>
+            </div>
+        </p-card>
+    </div>
+
+    <div class="col-12 md:col-4">
+        <p-card header="Ações">
+            <div class="flex flex-column gap-2">
+                <button pButton label="Editar" icon="pi pi-pencil" routerLink="/users/{{user.id}}/edit"
+                    *ngIf="authService.isAdmin()"></button>
+                <button pButton label="Redefinir Senha" icon="pi pi-key" *ngIf="authService.isAdmin()"></button>
+            </div>
+        </p-card>
+    </div>
+
+    <div class="col-12" *ngIf="managedProperties.length > 0">
+        <p-card header="Empreendimentos Vinculados">
+            <p-table [value]="managedProperties">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Endereço</th>
+                        <th>Status</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-property>
+                    <tr>
+                        <td>{{property.name}}</td>
+                        <td>{{property.address}}</td>
+                        <td>
+                            <p-tag [value]="property.isActive ? 'Ativo' : 'Inativo'"
+                                [severity]="property.isActive ? 'success' : 'danger'"></p-tag>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-card>
+    </div>
+</div>

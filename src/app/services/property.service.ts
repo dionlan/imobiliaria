@@ -1,19 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { map, delay, switchMap, catchError } from 'rxjs/operators';
+import { map, delay, switchMap, catchError, tap } from 'rxjs/operators';
 import { Property, PropertyStatus, PropertyManager } from '../models/property.model';
-import { User, UserRole } from '../models/user.model';
+import { User } from '../models/user.model';
 import propertiesData from '../../assets/data/properties.json';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../environment';
 
 @Injectable({ providedIn: 'root' })
 export class PropertyService {
-
   private apiUrl = `${environment.apiUrl}/properties`;
-
-  http = inject(HttpClient);
-
+  private http = inject(HttpClient);
+  private cachedProperties: Property[] | null = null;
   private propertiesCache: Property[] = propertiesData.map(p => ({
     ...p,
     status: (p as any).status ? (p as any).status as PropertyStatus : PropertyStatus.ACTIVE,
@@ -53,8 +51,21 @@ export class PropertyService {
     }));
   }
 
-  getProperties(): Observable<Property[]> {
+  /* getProperties(): Observable<Property[]> {
     return of(this.propertiesCache).pipe(delay(500));
+  } */
+
+  getProperties(): Observable<Property[]> {
+    if (this.cachedProperties) {
+      return of(this.cachedProperties);
+    }
+    return this.http.get<Property[]>(this.apiUrl).pipe(
+      tap(properties => this.cachedProperties = properties)
+    );
+  }
+
+  clearCache(): void {
+    this.cachedProperties = null;
   }
 
   getPropertyById(id: number): Observable<Property> {
@@ -63,6 +74,12 @@ export class PropertyService {
       throw new Error('Empreendimento não encontrado');
     }
     return of(property).pipe(delay(500));
+  }
+
+  getPropertyByIdNovo(id: number): Observable<Property> {
+    return this.http.get<Property>(`${this.apiUrl}/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   createProperty(propertyData: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Observable<Property> {
