@@ -1,5 +1,4 @@
 import { Property } from "./property.model";
-import { Seller } from "./seller";
 
 export enum UserRole {
   ADMIN = 'ADMINISTRADOR',

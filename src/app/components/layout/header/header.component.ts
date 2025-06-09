@@ -17,7 +17,7 @@ export class HeaderComponent {
 
     isProfileMenuOpen = false;
     hasUnreadNotifications = false;
-    appName = 'Gestão Imobiliária';
+    appName = 'Gestão Simóvel';
 
     get userInitial(): string {
         return this.authService.getCurrentUser()?.name?.charAt(0) || 'U';

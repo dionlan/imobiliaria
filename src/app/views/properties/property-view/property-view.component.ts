@@ -86,7 +86,7 @@ export class PropertyViewComponent implements OnInit {
     ).subscribe({
         next: (property) => {
           this.property = property;
-          console.log('EMPREENDIMENTO: ', this.property);
+          console.log('EMPREENDIMENTO VISUALIZADO: ', this.property);
           this.loadAvailableManagers();
       }, error: (err) => {
         this.error = 'Erro ao carregar dados do empreendimento';
@@ -109,7 +109,7 @@ export class PropertyViewComponent implements OnInit {
         this.availableManagers = managers.filter(manager =>
           !this.property!.managers.some(m => m.managerId === manager.id)
         );
-        console.log('GESTORES DISPONÍVEIS: ', this.availableManagers)
+        console.log('GESTORES DISPONÍVEIS VISUALIZAÇÃO: ', this.availableManagers)
       },
       error: () => {
         this.messageService.add({
@@ -132,6 +132,7 @@ export class PropertyViewComponent implements OnInit {
       next: (agents) => {
         this.availableAgents = agents;
         this.showAddAgentDialog = true;
+        console.log('CORETORES DISPONÍVEIS VISUALIZAÇÃO: ', this.availableManagers)
       },
       error: () => {
         this.messageService.add({

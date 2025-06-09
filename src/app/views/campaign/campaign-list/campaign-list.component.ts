@@ -11,6 +11,7 @@ import { AuthService } from '../../../services/auth.service';
 import { PropertySelectorComponent } from './property-selector/property-selector.component';
 import { Property } from '../../../models/property.model';
 import { PropertyService } from '../../../services/property.service';
+import { FilterCriteria } from '../../../components/shared/advanced-filter/model/filter-criteria';
 
 @Component({
     selector: 'app-campaign-list',
@@ -99,26 +100,60 @@ export class CampaignListComponent implements OnInit {
         return property ? property.name : 'Empreendimento não encontrado';
     }
 
-    applyFilter(filter: any): void {
-        if (!filter || Object.keys(filter).length === 0) {
+    applyFilter(filter: FilterCriteria): void {
+        if (!filter || Object.keys(filter).every(key => !filter[key as keyof FilterCriteria])) {
             this.filteredCampaigns = [...this.campaigns];
+            this.pagination.totalRecords = this.filteredCampaigns.length;
+            this.pagination.page = 1;
             return;
         }
 
         this.filteredCampaigns = this.campaigns.filter(campaign => {
-            const matchesSearch = filter.searchTerm ?
-                campaign.name.toLowerCase().includes(filter.searchTerm.toLowerCase()) ||
-                campaign.description.toLowerCase().includes(filter.searchTerm.toLowerCase()) ||
-                campaign.code.toLowerCase().includes(filter.searchTerm.toLowerCase()) : true;
+            // Filtro por texto
+            const matchesSearch = !filter.searchTerm ||
+                [campaign.description, campaign.code, campaign.property?.name]
+                    .some(field => field?.toLowerCase().includes(filter.searchTerm!.toLowerCase()));
 
-            const matchesStatus = filter.status ?
-                campaign.status === filter.status : true;
+            // Filtro por status
+            const matchesStatus = !filter.status ||
+                campaign.status === filter.status;
 
-            return matchesSearch && matchesStatus;
+            // Filtro por data
+            let matchesDate = true;
+            if (filter.startDate || filter.endDate) {
+                const campaignDate = this.parseDate(
+                    typeof campaign.createdAt === 'string'
+                        ? campaign.createdAt
+                        : campaign.createdAt?.toISOString?.() ?? ''
+                );
+
+                if (filter.startDate && campaignDate < filter.startDate) {
+                    matchesDate = false;
+                }
+                if (filter.endDate) {
+                    const endDate = new Date(filter.endDate);
+                    endDate.setDate(endDate.getDate() + 1); // Inclui todo o dia final
+                    if (campaignDate >= endDate) {
+                        matchesDate = false;
+                    }
+                }
+            }
+
+            return matchesSearch && matchesStatus && matchesDate;
         });
 
         this.pagination.totalRecords = this.filteredCampaigns.length;
         this.pagination.page = 1;
+    }
+
+    private parseDate(dateString: string): Date {
+        if (!dateString) return new Date(0);
+
+        // Converte de "dd/MM/yyyy HH:mm:ss" para Date
+        const [datePart, timePart] = dateString.split(' ');
+        const [day, month, year] = datePart.split('/').map(Number);
+
+        return new Date(year, month - 1, day);
     }
 
     sort(field: string): void {
@@ -208,6 +243,7 @@ export class CampaignListComponent implements OnInit {
     }
 
     associateWithProperty(campaignId: number, propertyId: number): void {
+        console.log('ID DA CAMPANHA: ', campaignId, 'ID PROPERTY: ', propertyId);
         this.loading = true;
         this.campaignService.associateWithProperty(campaignId, propertyId)
             .pipe(finalize(() => this.loading = false))

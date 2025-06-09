@@ -11,6 +11,7 @@ import { ToastModule } from 'primeng/toast';
 import { PasswordResetDialogComponent } from '../../../components/shared/password-reset-dialog/password-reset-dialog.component';
 import { AdvancedFilterComponent } from '../../../components/shared/advanced-filter/advanced-filter.component';
 import { TranslateRolePipe } from '../../../pipes/translate-role.pipe';
+import { FilterCriteria } from '../../../components/shared/advanced-filter/model/filter-criteria';
 
 @Component({
     selector: 'app-user-list',
@@ -88,28 +89,34 @@ export class UserListComponent implements OnInit {
         });
     }
 
-    applyFilter(filter: any): void {
-        if (!filter || Object.keys(filter).length === 0) {
+    applyFilter(filter: FilterCriteria): void {
+        // Se não houver filtro ou todos os campos estiverem vazios, retorna todos os usuários
+        if (!filter || Object.keys(filter).every(key => !filter[key as keyof FilterCriteria])) {
             this.filteredUsers = [...this.users];
+            this.pagination.totalRecords = this.filteredUsers.length;
+            this.pagination.page = 1;
             return;
         }
 
         this.filteredUsers = this.users.filter(user => {
-            const matchesSearch = filter.searchTerm ?
-                user.name.toLowerCase().includes(filter.searchTerm.toLowerCase()) ||
-                user.email.toLowerCase().includes(filter.searchTerm.toLowerCase()) : true;
+            // Filtro por texto (nome ou email)
+            const matchesSearch = !filter.searchTerm ||
+                [user.name, user.email]
+                    .some(field => field?.toLowerCase().includes(filter.searchTerm!.toLowerCase()));
 
-            const matchesStatus = filter.status ?
-                user.isActive === (filter.status === 'active') : true;
+            // Filtro por status (ativo/inativo)
+            const matchesStatus = !filter.status ||
+                user.isActive === (filter.status === 'active');
 
-            const matchesRole = filter.role ?
-                user.role === filter.role : true;
+            // Filtro por role (papel)
+            const matchesRole = !filter.role ||
+                user.role === filter.role;
 
             return matchesSearch && matchesStatus && matchesRole;
         });
 
         this.pagination.totalRecords = this.filteredUsers.length;
-        this.pagination.page = 1; // Reset para primeira página
+        this.pagination.page = 1;
     }
 
     sort(field: string): void {

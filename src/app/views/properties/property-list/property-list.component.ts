@@ -10,6 +10,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, startWith } from 'rxjs/operators';
 import { TruncatePipe } from '../../../pipes/truncate.pipe';
 import { AdvancedFilterComponent } from '../../../components/shared/advanced-filter/advanced-filter.component';
+import { FilterCriteria } from '../../../components/shared/advanced-filter/model/filter-criteria';
 
 @Component({
   selector: 'app-property-list',
@@ -99,28 +100,61 @@ export class PropertyListComponent implements OnInit {
     console.log('Mapa de gestores inicializado:', this.managerNamesMap);
   }
 
-  applyFilter(filter: any): void {
-    if (!filter || Object.keys(filter).length === 0) {
+  applyFilter(filter: FilterCriteria): void {
+    if (!filter || Object.keys(filter).every(key => !filter[key as keyof FilterCriteria])) {
       this.filteredProperties = [...this.properties];
+      this.pagination.totalRecords = this.filteredProperties.length;
+      this.pagination.page = 1;
       return;
     }
 
     this.filteredProperties = this.properties.filter(property => {
-      const matchesSearch = filter.searchTerm ?
-        property.name.toLowerCase().includes(filter.searchTerm.toLowerCase()) ||
-        property.address.toLowerCase().includes(filter.searchTerm.toLowerCase()) : true;
+      // Filtro por texto - busca no nome da propriedade e nos nomes dos gestores
+      const matchesSearch = !filter.searchTerm ||
+        [property.name, ...property.managers.map(manager => manager.manager?.name)]
+          .filter((field): field is string => Boolean(field))
+          .some(field => field.toLowerCase().includes(filter.searchTerm!.toLowerCase()));
 
-      const matchesStatus = filter.status ?
-        property.isActive === (filter.status === 'active') : true;
+      // Filtro por status
+      const matchesStatus = !filter.status ||
+        property.status === filter.status;
 
-      return matchesSearch && matchesStatus;
+      // Filtro por data
+      let matchesDate = true;
+      if (filter.startDate || filter.endDate) {
+        const propertyDate = this.parseDate(
+          typeof property.createdAt === 'string'
+            ? property.createdAt
+            : property.createdAt?.toISOString?.() ?? ''
+        );
+
+        if (filter.startDate && propertyDate < filter.startDate) {
+          matchesDate = false;
+        }
+        if (filter.endDate) {
+          const endDate = new Date(filter.endDate);
+          endDate.setDate(endDate.getDate() + 1); // Inclui todo o dia final
+          if (propertyDate >= endDate) {
+            matchesDate = false;
+          }
+        }
+      }
+
+      return matchesSearch && matchesStatus && matchesDate;
     });
 
-    this.pagination.page = 0; // Reset para primeira página
     this.pagination.totalRecords = this.filteredProperties.length;
-    this.pagination.totalPages = Math.ceil(this.pagination.totalRecords / this.pagination.pageSize);
-    this.updatePages();
-    this.applyPagination();
+    this.pagination.page = 1;
+  }
+
+  private parseDate(dateString: string): Date {
+    if (!dateString) return new Date(0);
+
+    // Converte de "dd/MM/yyyy HH:mm:ss" para Date
+    const [datePart, timePart] = dateString.split(' ');
+    const [day, month, year] = datePart.split('/').map(Number);
+
+    return new Date(year, month - 1, day);
   }
 
   sort(field: string): void {

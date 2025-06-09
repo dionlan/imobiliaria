@@ -28,6 +28,10 @@ export class UserService {
       shareReplay(1) // Cache compartilhado para múltiplos assinantes
     );
 
+    this.usersCache$.subscribe(users => {
+      console.log('USUÁRIOS CACHE:', users);
+    });
+
     this.propertiesCache$ = this.http.get<Property[]>(`${environment.apiUrl}/properties`).pipe(
       catchError(this.handleError),
       shareReplay(1)
@@ -99,14 +103,13 @@ export class UserService {
 
   getAgentsByManagers(managerIds: number[]): Observable<User[]> {
     console.log('Manager IDs recebidos:', managerIds); // Debug adicional
-
     return this.getUsersByRole(UserRole.AGENT).pipe(
       map(agents => {
+        console.log('CORRETORES DOS GESTEORES: ', agents)
         const filtered = agents.filter(agent => {
           const hasManager = agent.managers?.some(managerId =>
             managerIds.includes(managerId)
           );
-          console.log(`Agente ${agent.name} (${agent.managers}) - Incluído: ${hasManager}`);
           return hasManager;
         });
 

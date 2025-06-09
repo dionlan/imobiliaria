@@ -1,13 +1,13 @@
 <div
     class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <!-- Notificação -->
         <div *ngIf="showNotification" class="fixed top-4 right-4 z-50 w-full max-w-sm animate-fade-in">
             <div [ngClass]="{
-          'bg-green-50 border-green-200 text-green-800': notificationType === 'success',
-          'bg-red-50 border-red-200 text-red-800': notificationType === 'error',
-          'bg-yellow-50 border-yellow-200 text-yellow-800': notificationType === 'warn'
-        }" class="rounded-lg border p-4 shadow-lg">
+                'bg-green-50 border-green-200 text-green-800': notificationType === 'success',
+                'bg-red-50 border-red-200 text-red-800': notificationType === 'error',
+                'bg-yellow-50 border-yellow-200 text-yellow-800': notificationType === 'warn'
+            }" class="rounded-lg border p-4 shadow-lg">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
                         <svg *ngIf="notificationType === 'success'" class="h-5 w-5 text-green-400" fill="none"
@@ -33,10 +33,10 @@
                     <button (click)="dismissNotification()"
                         class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex h-8 w-8 focus:outline-none focus:ring-2 focus:ring-offset-2"
                         [ngClass]="{
-              'bg-green-50 text-green-500 hover:bg-green-100 focus:ring-green-600 focus:ring-offset-green-50': notificationType === 'success',
-              'bg-red-50 text-red-500 hover:bg-red-100 focus:ring-red-600 focus:ring-offset-red-50': notificationType === 'error',
-              'bg-yellow-50 text-yellow-500 hover:bg-yellow-100 focus:ring-yellow-600 focus:ring-offset-yellow-50': notificationType === 'warn'
-            }">
+                            'bg-green-50 text-green-500 hover:bg-green-100 focus:ring-green-600 focus:ring-offset-green-50': notificationType === 'success',
+                            'bg-red-50 text-red-500 hover:bg-red-100 focus:ring-red-600 focus:ring-offset-red-50': notificationType === 'error',
+                            'bg-yellow-50 text-yellow-500 hover:bg-yellow-100 focus:ring-yellow-600 focus:ring-offset-yellow-50': notificationType === 'warn'
+                        }">
                         <span class="sr-only">Fechar</span>
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -62,19 +62,6 @@
                     <h1 class="text-2xl font-bold text-white">
                         {{ isEdit ? 'Editar Empreendimento' : 'Novo Empreendimento' }}
                     </h1>
-
-                    <div *ngIf="isEdit" class="ml-auto">
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="statusControl.value"
-                                [ngModelOptions]="{standalone: true}" class="sr-only peer">
-                            <div
-                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600">
-                            </div>
-                            <span class="ml-3 text-sm font-medium text-white">
-                                {{ statusControl.value ? 'Ativo' : 'Inativo' }}
-                            </span>
-                        </label>
-                    </div>
                 </div>
             </div>
 
@@ -97,7 +84,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Nome do Empreendimento -->
                         <div class="space-y-2">
                             <label for="name" class="block text-sm font-medium text-gray-700">Nome do Empreendimento
@@ -113,9 +100,9 @@
                                 <input id="name" type="text" formControlName="name"
                                     class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
                                     [ngClass]="{
-                    'border-red-500': form.get('name')?.invalid && (form.get('name')?.dirty || form.get('name')?.touched),
-                    'border-green-500': form.get('name')?.valid && (form.get('name')?.dirty || form.get('name')?.touched)
-                  }" placeholder="Nome completo do empreendimento">
+                                        'border-red-500': form.get('name')?.invalid && (form.get('name')?.dirty || form.get('name')?.touched),
+                                        'border-green-500': form.get('name')?.valid && (form.get('name')?.dirty || form.get('name')?.touched)
+                                    }" placeholder="Nome completo do empreendimento">
                             </div>
                             <div *ngIf="form.get('name')?.invalid && (form.get('name')?.dirty || form.get('name')?.touched)"
                                 class="text-red-600 text-xs animate-fade-in">
@@ -140,14 +127,33 @@
                                 <input id="address" type="text" formControlName="address"
                                     class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
                                     [ngClass]="{
-                    'border-red-500': form.get('address')?.invalid && (form.get('address')?.dirty || form.get('address')?.touched),
-                    'border-green-500': form.get('address')?.valid && (form.get('address')?.dirty || form.get('address')?.touched)
-                  }" placeholder="Endereço completo">
+                                        'border-red-500': form.get('address')?.invalid && (form.get('address')?.dirty || form.get('address')?.touched),
+                                        'border-green-500': form.get('address')?.valid && (form.get('address')?.dirty || form.get('address')?.touched)
+                                    }" placeholder="Endereço completo">
                             </div>
                             <div *ngIf="form.get('address')?.invalid && (form.get('address')?.dirty || form.get('address')?.touched)"
                                 class="text-red-600 text-xs animate-fade-in">
                                 <span *ngIf="form.get('address')?.errors?.['required']">Endereço é obrigatório</span>
                                 <span *ngIf="form.get('address')?.errors?.['minlength']">Mínimo de 5 caracteres</span>
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Status *</label>
+                            <div class="relative">
+                                <div *ngIf="isEdit" class="ml-auto">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" [(ngModel)]="statusControl.value"
+                                            [ngModelOptions]="{standalone: true}" class="sr-only peer">
+                                        <div
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600">
+                                        </div>
+                                        <span class="ml-3 text-sm font-medium text-gray-700">
+                                            {{ statusControl.value ? 'Ativo' : 'Inativo' }}
+                                        </span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -214,31 +220,80 @@
                         @if (filteredManagers.length > 0) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @for (manager of filteredManagers; track manager.id) {
-                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 group cursor-pointer"
+                            <div class="relative border border-gray-200 rounded-lg p-4 transition-all duration-200 group"
                                 [class.bg-indigo-50]="isManagerSelected(manager.id)"
-                                (click)="toggleManagerSelection(manager)">
-                                <div class="flex items-start justify-between">
+                                [class.opacity-80]="!manager.isActive" [class.cursor-not-allowed]="!manager.isActive"
+                                [class.hover:shadow-md]="manager.isActive" [class.cursor-pointer]="manager.isActive"
+                                (click)="manager.isActive ? toggleManagerSelection(manager) : null">
+
+                                <!-- Overlay para gestores inativos -->
+                                @if (!manager.isActive) {
+                                <div class="absolute inset-0 bg-white/50 backdrop-blur-[1px] rounded-lg z-10"></div>
+                                }
+
+                                <!-- Badge de status inativo -->
+                                @if (!manager.isActive) {
+                                <div class="absolute top-3 right-3 z-20">
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-300/80">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1 text-gray-500"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728" />
+                                        </svg>
+                                        Inativo
+                                    </span>
+                                </div>
+                                }
+
+                                <div class="flex items-start justify-between relative z-0">
                                     <div class="flex items-center space-x-3 min-w-0">
                                         <div class="flex-shrink-0">
-                                            <div
-                                                class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-600 font-medium shadow-inner">
+                                            <div class="h-10 w-10 rounded-full flex items-center justify-center font-medium shadow-inner"
+                                                [class.bg-gradient-to-r]="manager.isActive"
+                                                [class.from-indigo-100]="manager.isActive"
+                                                [class.to-blue-100]="manager.isActive"
+                                                [class.text-indigo-600]="manager.isActive"
+                                                [class.bg-gray-200]="!manager.isActive"
+                                                [class.text-gray-600]="!manager.isActive">
                                                 {{ manager.name.charAt(0) }}
                                             </div>
                                         </div>
                                         <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-medium text-gray-900 truncate">{{ manager.name }}</p>
-                                            <p class="text-sm text-gray-500 truncate">{{ manager.email }}</p>
+                                            <p class="text-sm font-medium truncate"
+                                                [class.text-gray-900]="manager.isActive"
+                                                [class.text-gray-600]="!manager.isActive">
+                                                {{ manager.name }}
+                                            </p>
+                                            <p class="text-sm truncate" [class.text-gray-600]="manager.isActive"
+                                                [class.text-gray-600]="!manager.isActive">
+                                                {{ manager.email }}
+                                            </p>
+                                            @if (!manager.isActive) {
+                                            <p class="mt-1 text-xs text-gray-600">
+                                                Este gestor está desabilitado e não pode ser selecionado
+                                            </p>
+                                            }
                                         </div>
                                     </div>
                                     <div class="flex-shrink-0">
-                                        <div class="h-5 w-5 rounded-full border-2 border-gray-300 flex items-center justify-center transition-colors duration-200"
-                                            [class.bg-indigo-600]="isManagerSelected(manager.id)"
-                                            [class.border-indigo-600]="isManagerSelected(manager.id)">
-                                            @if (isManagerSelected(manager.id)) {
+                                        <div class="h-5 w-5 rounded-full border-2 flex items-center justify-center transition-colors duration-200"
+                                            [class.bg-indigo-600]="isManagerSelected(manager.id) && manager.isActive"
+                                            [class.border-indigo-600]="isManagerSelected(manager.id) && manager.isActive"
+                                            [class.border-gray-300]="!isManagerSelected(manager.id) || !manager.isActive"
+                                            [class.bg-gray-300]="!manager.isActive">
+                                            @if (isManagerSelected(manager.id) && manager.isActive) {
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
                                                     d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            }
+                                            @if (!manager.isActive) {
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                             }
                                         </div>
@@ -297,64 +352,305 @@
                                 </svg>
                             </div>
                             <h2 class="text-xl font-semibold text-gray-800">
-                                Corretores Vinculados
+                                Corretores Vinculados *
                             </h2>
                             @if (loadingAgents) {
                             <span class="text-xs text-gray-500 ml-2 animate-pulse">(carregando...)</span>
                             }
                         </div>
                         <p class="mt-2 text-sm text-gray-500">
-                            Corretores associados aos gestores selecionados
+                            Selecione os corretores que devem trabalhar neste empreendimento
                         </p>
                     </div>
 
-                    @if (agents.length > 0) {
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @for (agent of agents; track agent.id) {
-                        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 group cursor-pointer"
-                            [class.bg-green-50]="isAgentSelected(agent.id)" (click)="toggleAgentSelection(agent)">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-center space-x-3 min-w-0">
-                                    <div class="flex-shrink-0">
-                                        <div
-                                            class="h-10 w-10 rounded-full bg-gradient-to-r from-green-100 to-teal-100 flex items-center justify-center text-green-600 font-medium shadow-inner">
-                                            {{ agent.name.charAt(0) }}
+                    <div class="space-y-4">
+                        <!-- Campo de busca de corretores -->
+                        <!-- <div class="relative max-w-md transition-all duration-300 focus-within:max-w-lg">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input type="text" [(ngModel)]="agentSearchTerm" (input)="filterAgents()"
+                                [ngModelOptions]="{standalone: true}"
+                                class="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
+                                placeholder="Buscar corretores por nome...">
+                        </div> -->
+
+                        <!-- Lista de corretores disponíveis -->
+                        <!-- @if (filteredAgents.length > 0) {
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @for (agent of filteredAgents; track agent.id) {
+                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 group cursor-pointer"
+                                [class.bg-green-50]="isAgentSelected(agent.id)" (click)="toggleAgentSelection(agent)">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex items-center space-x-3 min-w-0">
+                                        <div class="flex-shrink-0">
+                                            <div
+                                                class="h-10 w-10 rounded-full bg-gradient-to-r from-green-100 to-teal-100 flex items-center justify-center text-green-600 font-medium shadow-inner">
+                                                {{ agent.name.charAt(0) }}
+                                            </div>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-sm font-medium text-gray-900 truncate">{{ agent.name }}</p>
+                                            <p class="text-sm text-gray-500 truncate">{{ agent.email }}</p>
+                                            @if (agent.managerId) {
+                                            <div class="mt-1">
+                                                <span
+                                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3 w-3"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    {{ getManagerName(agent.managerId) }}
+                                                </span>
+                                            </div>
+                                            }
                                         </div>
                                     </div>
-                                    <div class="min-w-0 flex-1">
-                                        <p class="text-sm font-medium text-gray-900 truncate">{{ agent.name }}</p>
-                                        <p class="text-sm text-gray-500 truncate">{{ agent.email }}</p>
-                                    </div>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <div class="h-5 w-5 rounded-full border-2 border-gray-300 flex items-center justify-center transition-colors duration-200"
-                                        [class.bg-green-600]="isAgentSelected(agent.id)"
-                                        [class.border-green-600]="isAgentSelected(agent.id)">
-                                        @if (isAgentSelected(agent.id)) {
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                                d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        }
+                                    <div class="flex-shrink-0">
+                                        <div class="h-5 w-5 rounded-full border-2 border-gray-300 flex items-center justify-center transition-colors duration-200"
+                                            [class.bg-green-600]="isAgentSelected(agent.id)"
+                                            [class.border-green-600]="isAgentSelected(agent.id)">
+                                            @if (isAgentSelected(agent.id)) {
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            }
+                        </div>
+                        } @else if (agentSearchTerm) {
+                        <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h3 class="mt-3 text-sm font-medium text-gray-900">Nenhum corretor encontrado</h3>
+                            <p class="mt-1 text-sm text-gray-500">Não encontramos corretores com esse nome</p>
+                            <div class="mt-4">
+                                <button type="button" (click)="agentSearchTerm = ''; filterAgents()"
+                                    class="text-sm font-medium text-green-600 hover:text-green-500 focus:outline-none transition-colors duration-200">
+                                    Limpar busca
+                                </button>
+                            </div>
+                        </div>
+                        } @else {
+                        <div
+                            class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-green-300 transition-colors duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <h3 class="mt-3 text-sm font-medium text-gray-900">Nenhum corretor disponível</h3>
+                            <p class="mt-1 text-sm text-gray-500">Todos os corretores já estão vinculados ou não
+                                correspondem à pesquisa</p>
+                        </div>
+                        } -->
+
+                        @if (selectedManagersWithAgents.length > 0) {
+                        <!-- Seção de Corretores Vinculados por Gestor -->
+                        <!-- Seção de Corretores Vinculados por Gestor -->
+                        <div class="space-y-6 mt-8" *ngIf="selectedManagersWithAgents.length > 0">
+                            <h3 class="text-lg font-semibold text-gray-800 tracking-tight">Distribuição de Corretores
+                            </h3>
+
+                            @for (managerData of selectedManagersWithAgents; track managerData.managerId) {
+                            <div class="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-gray-200/80 shadow-xs hover:shadow-sm transition-all duration-300 ease-in-out"
+                                (click)="$event.stopPropagation()">
+
+                                <!-- Cabeçalho do Gestor com Estatísticas -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div
+                                            class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-100 via-blue-100 to-purple-100 flex items-center justify-center text-indigo-600 font-medium shadow-inner">
+                                            {{ managerData.manager?.name?.charAt(0) }}
+                                        </div>
+                                        <div>
+                                            <h3 class="text-sm font-semibold text-gray-900">{{ managerData.manager?.name
+                                                }}</h3>
+                                            <div class="flex flex-wrap items-center gap-2 mt-1">
+                                                <span
+                                                    class="text-xs px-2 py-0.5 bg-indigo-100/80 text-indigo-800 rounded-full backdrop-blur-sm">Gestor</span>
+                                                <span class="text-xs text-gray-500">
+                                                    {{ managerData.agents.length }} {{ managerData.agents.length === 1 ?
+                                                    'corretor' : 'corretores' }}
+                                                </span>
+                                                <span class="text-xs text-gray-500">
+                                                    {{ getAvailableAgentsCount(managerData.managerId) }} disponíveis
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botão de Ação com Efeito de Onda -->
+                                    <button (click)="toggleAgentAssignmentPanel(managerData.managerId, $event)"
+                                        class="relative overflow-hidden inline-flex items-center px-3.5 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-xs text-white bg-gradient-to-br from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:ring-offset-1 transition-all duration-200 ease-out group">
+                                        <span class="relative z-10 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="h-3.5 w-3.5 mr-1.5 transition-transform duration-300"
+                                                [class.rotate-90]="activeManagerForAssignment === managerData.managerId"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                            </svg>
+                                            {{ activeManagerForAssignment === managerData.managerId ? 'Fechar' :
+                                            'Adicionar' }}
+                                        </span>
+                                        <span
+                                            class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                    </button>
+                                </div>
+
+                                <!-- Painel de Atribuição de Corretores -->
+                                @if (activeManagerForAssignment === managerData.managerId) {
+                                <div @fadeInOut
+                                    class="mb-5 p-4 bg-white/90 rounded-lg border border-gray-200/80 shadow-inner backdrop-blur-sm">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900">Adicionar corretores</h4>
+                                            <p class="text-xs text-gray-500 mt-0.5">
+                                                {{ availableAgentsForAssignment.length }} corretores disponíveis
+                                            </p>
+                                        </div>
+                                        <button (click)="toggleAgentAssignmentPanel(managerData.managerId, $event)"
+                                            class="p-1 -mr-1 text-gray-400 hover:text-gray-600 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/30">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- Campo de Busca Avançado -->
+                                    <div class="relative mb-4 group">
+                                        <div
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="h-4 w-4 text-gray-400 group-focus-within:text-green-500 transition-colors duration-200"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </div>
+                                        <input type="text" [(ngModel)]="agentAssignmentSearchTerm"
+                                            (input)="filterAvailableAgentsForManager(managerData.managerId)"
+                                            [ngModelOptions]="{standalone: true}"
+                                            class="block w-full pl-9 pr-4 py-2 text-sm border border-gray-300/80 rounded-lg shadow-xs focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/80 transition-all duration-200 bg-white/70"
+                                            placeholder="Nome, e-mail ou telefone...">
+                                    </div>
+
+                                    <!-- Lista de Corretores Disponíveis -->
+                                    @if (availableAgentsForAssignment.length > 0) {
+                                    <div class="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                        @for (agent of availableAgentsForAssignment; track agent.id) {
+                                        <div class="flex items-center justify-between p-2.5 hover:bg-green-50/50 rounded-lg transition-all duration-200 ease-out group"
+                                            [class.bg-green-50]="isHoveredAgent === agent.id">
+                                            <div class="flex items-center space-x-3 min-w-0">
+                                                <div
+                                                    class="h-9 w-9 rounded-full bg-gradient-to-br from-green-100 to-teal-100 flex items-center justify-center text-green-600 font-medium text-sm shadow-inner">
+                                                    {{ agent.name.charAt(0) }}
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate">{{ agent.name
+                                                        }}</p>
+                                                    <p class="text-xs text-gray-500 truncate">{{ agent.email }}</p>
+                                                </div>
+                                            </div>
+                                            <button (click)="assignAgentToManager(managerData.managerId, agent, $event)"
+                                                class="opacity-0 group-hover:opacity-100 px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 hover:bg-green-200 transition-all duration-200 ease-out hover:shadow-xs"
+                                                [class.opacity-100]="isHoveredAgent === agent.id"
+                                                (mouseenter)="isHoveredAgent = agent.id"
+                                                (mouseleave)="isHoveredAgent = null">
+                                                Vincular
+                                            </button>
+                                        </div>
+                                        }
+                                    </div>
+                                    } @else {
+                                    <div
+                                        class="text-center py-6 bg-gray-50/30 rounded-lg border border-dashed border-gray-300/50">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 text-gray-400"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                                        </svg>
+                                        <h4 class="mt-2 text-sm font-medium text-gray-700">
+                                            {{ agentAssignmentSearchTerm ? 'Nenhum corretor encontrado' : 'Nenhum
+                                            corretor disponível' }}
+                                        </h4>
+                                        <p class="mt-1 text-xs text-gray-500 max-w-xs mx-auto">
+                                            {{ agentAssignmentSearchTerm ? 'Tente ajustar sua busca' : 'Todos os
+                                            corretores já estão vinculados' }}
+                                        </p>
+                                    </div>
+                                    }
+                                </div>
+                                }
+
+                                <!-- Lista de Corretores Vinculados -->
+                                @if (managerData.agents.length > 0) {
+                                <div
+                                    class="grid grid-cols-1 md:grid-cols-2 gap-3 pl-5 ml-5 border-l-2 border-indigo-200/60">
+                                    @for (agent of managerData.agents; track agent.agentId) {
+                                    <div
+                                        class="relative border border-gray-200/70 rounded-lg p-3.5 bg-white hover:bg-green-50/30 transition-all duration-200 ease-out group">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex items-center space-x-3 min-w-0">
+                                                <div
+                                                    class="h-9 w-9 rounded-full bg-gradient-to-br from-green-100 to-teal-100 flex items-center justify-center text-green-600 font-medium text-sm shadow-inner">
+                                                    {{ agent.agent?.name?.charAt(0) }}
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900 truncate">{{
+                                                        agent.agent?.name }}</p>
+                                                    <p class="text-xs text-gray-500 truncate">{{ agent.agent?.email }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                (click)="removeAgentFromManager(managerData.managerId, agent.agentId, $event)"
+                                                class="text-gray-400 hover:text-red-500 transition-colors duration-200 ease-out"
+                                                title="Remover corretor">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="absolute bottom-2 right-2">
+                                            <span
+                                                class="text-[0.6rem] px-1.5 py-0.5 bg-green-100/60 text-green-800 rounded-full">
+                                                Vinculado
+                                            </span>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+                                } @else {
+                                <div
+                                    class="text-center py-4 bg-white/50 rounded-lg border border-dashed border-gray-300/50">
+                                    <p class="text-sm text-gray-500">Nenhum corretor vinculado a este gestor</p>
+                                </div>
+                                }
+                            </div>
+                            }
                         </div>
                         }
                     </div>
-                    } @else if (!loadingAgents) {
-                    <div
-                        class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-green-300 transition-colors duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <h3 class="mt-3 text-sm font-medium text-gray-900">Nenhum corretor vinculado</h3>
-                        <p class="mt-1 text-sm text-gray-500">Os gestores selecionados não têm corretores associados</p>
-                    </div>
-                    }
                 </div>
 
                 <!-- Ações -->
@@ -373,7 +669,8 @@
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                             </path>
                         </svg>
-                        {{ loading ? 'Salvando...' : (isEdit ? 'Atualizar Empreendimento' : 'Criar Empreendimento') }}
+                        {{ loading ? 'Salvando...' : (isEdit ? 'Atualizar Empreendimento' : 'Criar Empreendimento')
+                        }}
                     </button>
                 </div>
             </form>

@@ -1,46 +1,51 @@
-.advanced-filter-container {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-end;
-    padding: 0.5rem;
-    background-color: var(--surface-card);
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
+:host {
+    display: block;
+}
 
-    .filter-form {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
+form {
+    .mat-form-field {
         width: 100%;
+    }
 
-        .filter-field {
-            display: flex;
-            flex-direction: column;
-            min-width: 180px;
+    .date-range-fields {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
 
-            .filter-label {
-                font-size: 0.875rem;
-                color: var(--text-color-secondary);
-                margin-bottom: 0.25rem;
-            }
-
-            &.date-range {
-                .date-fields {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-
-                    .date-separator {
-                        color: var(--text-color-secondary);
-                        font-size: 0.875rem;
-                    }
-                }
-            }
+        .date-separator {
+            color: var(--text-color-secondary);
+            font-size: 0.875rem;
         }
+    }
+
+    .reset-button {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+}
+
+/* Estilos para os campos de entrada */
+input,
+select {
+    &::-webkit-calendar-picker-indicator {
+        filter: invert(0.5);
+        cursor: pointer;
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    form {
+        grid-template-columns: 1fr !important;
 
         .reset-button {
-            margin-left: auto;
-            align-self: flex-end;
+            justify-content: flex-start;
+            margin-top: 0.5rem;
         }
     }
 }

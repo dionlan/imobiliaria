@@ -6,6 +6,7 @@ import { User } from '../models/user.model';
 import propertiesData from '../../assets/data/properties.json';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../environment';
+import { PropertyManagerAgentRequestDTO } from '../models/property-manager-agent';
 
 @Injectable({ providedIn: 'root' })
 export class PropertyService {
@@ -150,6 +151,10 @@ export class PropertyService {
       ),
       delay(500)
     );
+  }
+
+  updatePropertyAgents(dto: PropertyManagerAgentRequestDTO): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/vincular-manager`, dto);
   }
 
   /*removeManagerFromProperty(propertyId: number, managerId: number): Observable<Property> {
