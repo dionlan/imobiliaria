@@ -54,7 +54,7 @@ export class SidebarComponent implements OnInit {
       },
       {
         label: 'Usuários',
-        icon: PrimeIcons.USER_EDIT,
+        icon: PrimeIcons.USERS,
         routerLink: ['/users']
       }
     ];
@@ -65,13 +65,13 @@ export class SidebarComponent implements OnInit {
         icon: PrimeIcons.MEGAPHONE,
         routerLink: ['/campaigns']
       },
-      {
+      /* {
         label: 'Clientes',
         icon: PrimeIcons.USERS,
         routerLink: ['/clients'],
         badge: 'Novo'
       }
-      /* {
+      {
         label: 'Relatórios',
         icon: PrimeIcons.CHART_BAR,
         routerLink: ['/reports']
